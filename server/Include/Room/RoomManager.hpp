@@ -1,5 +1,5 @@
 #pragma once
-#include "GameManager.hpp"
+#include "Game/GameManager.hpp"
 
 /*
 The class Client -> MainServer interacts with room logic and data about rooms in the server.

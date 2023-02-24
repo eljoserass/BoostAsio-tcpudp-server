@@ -9,8 +9,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <cstring>
-#include <Room.hpp>
-#include <Player.hpp>
+#include "Room/Room.hpp"
+#include "Player/Player.hpp"
 
 using boost::asio::ip::udp;
 
