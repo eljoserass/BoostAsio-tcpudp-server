@@ -46,6 +46,22 @@ void Server::_read(vector<std::shared_ptr<tcp::socket>> &clients)
         }
         if (strcmp(data, "create_room;room1") == 0)
             _RoomManager->createRoom("room1");
+        if (strcmp(data, "roomsName") == 0) {
+            std::string roomsName("");
+            for (int i = 0; i < _RoomManager->_roomNames.size(); i++) {
+                roomsName += _RoomManager->_roomNames[i];
+                roomsName += ";";
+            }
+            _send(roomsName);
+        }
+        if (strcmp(data, "roomsId") == 0) {
+            std::string roomsId("");
+            for (int i = 0; i < _RoomManager->_roomIds.size(); i++) {
+                roomsId += _RoomManager->_roomIds[i];
+                roomsId += ";";
+            }
+            _send(roomsId);
+        }
     }
 }
 

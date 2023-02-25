@@ -1,6 +1,6 @@
 #pragma once
 #include <boost/asio.hpp>
-#include "Room/RoomManager.hpp"
+#include "RoomManager.hpp"
 
 using namespace boost::asio;
 using ip::tcp;
@@ -18,6 +18,7 @@ public:
 private:
     void _read(std::vector<std::shared_ptr<tcp::socket>> &clients);
     void _send(const string &message);
+    void _parse_commands();
 
     boost::asio::io_service &_io_service;
     tcp::acceptor _acceptor;

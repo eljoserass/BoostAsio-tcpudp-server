@@ -9,10 +9,7 @@ class TCPClient {
         void setIsConnected(bool value);
         void joinThread();
         std::string getCommandFromServer();
-
         boost::asio::io_service _io_service;
-    private:
-        
         std::shared_ptr<bool> isTcpRunning_;
         std::shared_ptr<std::string> commandFromServer;
         tcp::socket _socket;

@@ -15,7 +15,7 @@ void ClientServer::startUdp(std::string port)
 
 void ClientServer::startTcp()
 {
-    std::cout << "starttcp" <<std::endl;
+    std::cout << "startcp" <<std::endl;
     tcpClient_ = new TCPClient(host_, stoi(tcpPort_));
     std::cout << "tcp init" << std::endl;
     tcpClient_->run(isTCPRunning_, clientData);
@@ -23,6 +23,7 @@ void ClientServer::startTcp()
 
 void ClientServer::joinThread(void)
 {
+    std::cout << "joinThread" << std::endl;
     // puede que pete aqui
     tcpClient_->joinThread();
     // udpClient_->joinThread();
@@ -49,7 +50,7 @@ void ClientServer::setHost(const char *host)
     host_ = host;
 }
 
-void ClientServer::speak_to_UDPserver(udp::socket& socket, udp::endpoint& receiver_endpoint)
+void ClientServer::speak_to_UDPserver(udp::socket& socket, udp::endpoint& receiver_endpoint, std::string& message)
 {
     socket.send_to(boost::asio::buffer(" message from client outside loop"), receiver_endpoint);
     while (true) {
@@ -57,3 +58,4 @@ void ClientServer::speak_to_UDPserver(udp::socket& socket, udp::endpoint& receiv
         socket.send_to(boost::asio::buffer(" message from client in loop"), receiver_endpoint);
     }
 }
+

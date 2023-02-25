@@ -16,10 +16,14 @@ class ClientData {
 
         std::string currentRoomName;
         std::string currentRoomID;
-        std::vector<std::string> currentRoomPlayers;
+        std::vector<std::tuple <std::string, bool>> currentRoomPlayers;
         std::vector<std::string> currentAvailableRooms;
         std::string currentGamePort;
         std::string clientId;
         std::string clientName;
         bool isInGame;
+        bool isReady;
+        bool isInRoom;
+        bool isConnected;
+
 };

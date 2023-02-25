@@ -1,5 +1,5 @@
 #pragma once
-#include "Game/GameManager.hpp"
+#include "GameManager.hpp"
 
 /*
 The class Client -> MainServer interacts with room logic and data about rooms in the server.
@@ -24,8 +24,6 @@ class RoomManager
         void sendInfoByPlayersId(vector<boost::uuids::uuid> playerIds, const string &message);
         vector<Player> _players;
         GameManager *_GameManager;
-
-    private:
         vector<Room> _rooms;
         vector<string> _roomNames;
         vector<unsigned int> _roomIds;
