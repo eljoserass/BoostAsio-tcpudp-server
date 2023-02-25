@@ -12,8 +12,6 @@ set(SRC
     Player/Player.cpp
     Room/Room.cpp
     Room/RoomManager.cpp
-    Servers/TCPClient.cpp
-    Servers/TCPClient.hpp
     Servers/TCPServer.cpp
     Servers/UDPServer.cpp
 )

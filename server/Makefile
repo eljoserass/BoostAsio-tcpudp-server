@@ -9,7 +9,6 @@ SRCS	=	./Game/Game.cpp 		\
 			./Player/Player.cpp		\
 			./Room/Room.cpp			\
 			./Room/RoomManager.cpp	\
-			./Servers/TCPClient.cpp \
 			./Servers/TCPServer.cpp \
 			./Servers/UDPServer.cpp \
 			./main.cpp 

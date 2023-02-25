@@ -29,14 +29,14 @@ void Server::_read(vector<std::shared_ptr<tcp::socket>> &clients)
 {
     for (auto &client : clients) {
         boost::asio::streambuf buf;
-        boost::asio::mutable_buffers_1 buffer = boost::asio::buffer(buf.prepare(100));
+        char data[1024];
+        boost::asio::mutable_buffer buffer = boost::asio::buffer(data, 1024);
         client->async_read_some(buffer, [](boost::system::error_code ec, size_t bytes_transferred) {
             if (!ec)
                 cout << "Read " << bytes_transferred << " bytes\n";
             else
                 cout << "Error: " << ec.message() << "\n";
         });
-        const char *data = boost::asio::buffer_cast<const char *>(buf.data());
         // hacer un split de data para separar por ;
         if (strcmp(data, "newClient;player1") == 0) {
             boost::uuids::uuid playerId;
