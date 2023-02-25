@@ -30,7 +30,7 @@ void TCPClient::run(std::shared_ptr<bool>& isTcpRunning, std::shared_ptr<ClientD
     isTcpRunning_ = isTcpRunning;
     _send("hola from client");
     listen_thread_ = std::thread(listen_from_TCP_server, std::ref(_socket), std::ref(isTcpRunning), std::ref(clientData));
-    listen_thread_.join();
+    // listen_thread_.join();
 }
 
 void TCPClient::setIsConnected(bool value)

@@ -9,8 +9,6 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <cstring>
-#include "Room/Room.hpp"
-#include "Player/Player.hpp"
 
 using boost::asio::ip::udp;
 
@@ -29,8 +27,7 @@ class UDPServer {
         boost::array<char, 1024> recv_buffer_;
         std::map<udp::endpoint, bool> clients_;
         std::mutex mtx;
-        
-
+    
         void start_receive();
         void handle_receive(const boost::system::error_code& error, std::size_t received);
 
