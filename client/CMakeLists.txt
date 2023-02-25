@@ -23,3 +23,5 @@ set(HEADERS
 add_library(client STATIC ${SRC} ${HEADERS})
 
 target_link_libraries(client PRIVATE Boost::array Boost::asio Boost::uuid)
+
+target_include_directories(client PUBLIC publicInclude)
