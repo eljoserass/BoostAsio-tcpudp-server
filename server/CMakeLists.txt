@@ -30,6 +30,6 @@ add_library(server STATIC ${SRC} ${HEADER})
 
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/lib/boost/libs/uuid/include)
 
-target_link_libraries(server PRIVATE Boost::array Boost::asio Boost::uuid)
+target_link_libraries(server PUBLIC Boost::array Boost::asio Boost::uuid)
 
 target_include_directories(server PUBLIC publicInclude)
