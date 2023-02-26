@@ -1,5 +1,5 @@
 #pragma once
-#include "ClientData.hpp"
-#include "ClientServer.hpp"
-#include "TCPClient.hpp"
-#include "UDPClient.hpp"
+#include "../../Include/ClientData.hpp"
+#include "../../Include/ClientServer.hpp"
+#include "../../Include/TCPClient.hpp"
+#include "../../Include/UDPClient.hpp"
