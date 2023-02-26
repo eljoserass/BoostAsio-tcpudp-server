@@ -1,5 +1,7 @@
 #include "ClientServer.hpp"
 
+using namespace ClientController;
+
 int main(int argc, char **argv) {
     try {
 

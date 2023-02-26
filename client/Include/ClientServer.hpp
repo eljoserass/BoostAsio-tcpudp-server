@@ -3,6 +3,9 @@
 #include "./TCPClient.hpp"
 #include "./UDPClient.hpp"
 
+
+namespace ClientController {
+
 class ClientServer {
 
     public:
@@ -62,3 +65,5 @@ class ClientServer {
         UDPClient *udpClient_;
         std::string tcpPort_;
 };
+
+}
