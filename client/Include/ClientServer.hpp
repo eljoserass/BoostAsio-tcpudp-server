@@ -1,7 +1,7 @@
 #pragma once
 
-#include "TCPClient.hpp"
-#include "UDPClient.hpp"
+#include "./TCPClient.hpp"
+#include "./UDPClient.hpp"
 
 class ClientServer {
 

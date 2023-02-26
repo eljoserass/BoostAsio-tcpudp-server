@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ClientData.hpp"
+#include "./ClientData.hpp"
 
 class TCPClient {
     public:
