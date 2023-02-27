@@ -18,14 +18,6 @@ void RoomManager::deleteRoomById(boost::uuids::uuid id)
     }
 }
 
-vector<string> RoomManager::getRoomsName()
-{
-    for (unsigned int i = 0; i < _rooms.size(); i++) {
-        _roomNames.push_back(_rooms[i].getRoomName());
-    }
-    return _roomNames;
-}
-
 vector<string> RoomManager::getPlayersByRoomId(boost::uuids::uuid roomId)
 {
     vector<string> result;
@@ -115,4 +107,29 @@ void RoomManager::sendInfoByPlayersId(vector<boost::uuids::uuid> playerIds, cons
                 std::cerr << "Error sending message to client: " << error.message() << endl;
         }
     }
+}
+
+void RoomManager::getPlayerReady(boost::uuids::uuid playerId)
+{
+    for (int i = 0; i < _players.size(); i++) {
+        if (_players[i]._id == playerId)
+            _players[i].setIsReady();
+    }
+}
+
+tuple<boost::uuids::uuid, string> RoomManager::getRoomInfo(void)
+{
+    for (int i = 0; i < _rooms.size(); i++) {
+        _roomInfo = _rooms[i].getRoomInfo();
+    }
+    return _roomInfo;
+}
+
+tuple<boost::uuids::uuid, string> RoomManager::getPlayersInfoByRoomId(boost::uuids::uuid roomId)
+{
+    for (int i = 0; i < _players.size(); i++) {
+        if (_players[i].currentRoomId == roomId)
+            _playerInfo = _players[i].getPlayerInfo();
+    }
+    return _playerInfo;
 }

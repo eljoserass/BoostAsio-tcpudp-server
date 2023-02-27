@@ -37,9 +37,9 @@ class Player {
         // const string getPlayerName();
         boost::uuids::uuid currentRoomId;
         std::shared_ptr<boost::asio::ip::tcp::socket> socket;
+        boost::uuids::uuid _id;
 
     private:
-        boost::uuids::uuid _id;
         string _playerName;
         bool _isReady;
         bool _isLogOut;

@@ -13,7 +13,7 @@ class RoomManager
         ~RoomManager() {};
         void createRoom(const string roomName);
         void deleteRoomById(boost::uuids::uuid id);
-        vector<string> getRoomsName();
+        tuple<boost::uuids::uuid, string> getRoomInfo(void);
         vector<string> getPlayersByRoomId(boost::uuids::uuid roomId);
         boost::uuids::uuid addPlayer(std::shared_ptr<boost::asio::ip::tcp::socket> socket, const string playerName);
         void addPlayerToRoom(boost::uuids::uuid roomId, boost::uuids::uuid playerId);
@@ -22,11 +22,14 @@ class RoomManager
         bool isRoomReadyByRoomId(boost::uuids::uuid roomId);
         vector<boost::uuids::uuid> getPlayersIdByRoomId(boost::uuids::uuid roomId);
         void sendInfoByPlayersId(vector<boost::uuids::uuid> playerIds, const string &message);
+        void getPlayerReady(boost::uuids::uuid playerId);
+        tuple<boost::uuids::uuid, string> getPlayersInfoByRoomId(boost::uuids::uuid roomId);
+
         vector<Player> _players;
         GameManager *_GameManager;
 
     private:
         vector<Room> _rooms;
-        vector<string> _roomNames;
-        vector<unsigned int> _roomIds;
+        tuple<boost::uuids::uuid, string> _roomInfo;
+        tuple<boost::uuids::uuid, string> _playerInfo;
 };
