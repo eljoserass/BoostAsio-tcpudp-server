@@ -20,28 +20,30 @@ using std::tuple;
 Class that will contain all info necessary about a client that is connected
 */
 
-class Player {
-    public:
-        Player(std::shared_ptr<boost::asio::ip::tcp::socket> socket, const string playerName);
-        // ~Player(void);
-        void setPlayerId(const string playerName);
-        boost::uuids::uuid getPlayerId(void);
-        void setPlayerName(const string &playerName);
-        string getPlayerName(void);
-        void setIsReady(void);
-        bool getIsReady(void);
-        void setPlayerInfo(const string &playerName, boost::uuids::uuid id);
-        tuple<boost::uuids::uuid, string> getPlayerInfo(void);
-        // bool getIsLogOut(void);
-        // void setIsLogOut(void);
-        // const string getPlayerName();
-        boost::uuids::uuid currentRoomId;
-        std::shared_ptr<boost::asio::ip::tcp::socket> socket;
-        boost::uuids::uuid _id;
+namespace Server {
+    class Player {
+        public:
+            Player(std::shared_ptr<boost::asio::ip::tcp::socket> socket, const string playerName);
+            // ~Player(void);
+            void setPlayerId(const string playerName);
+            boost::uuids::uuid getPlayerId(void);
+            void setPlayerName(const string &playerName);
+            string getPlayerName(void);
+            void setIsReady(void);
+            bool getIsReady(void);
+            void setPlayerInfo(const string &playerName, boost::uuids::uuid id);
+            tuple<boost::uuids::uuid, string> getPlayerInfo(void);
+            // bool getIsLogOut(void);
+            // void setIsLogOut(void);
+            // const string getPlayerName();
+            boost::uuids::uuid currentRoomId;
+            std::shared_ptr<boost::asio::ip::tcp::socket> socket;
+            boost::uuids::uuid _id;
 
-    private:
-        string _playerName;
-        bool _isReady;
-        bool _isLogOut;
-        tuple<boost::uuids::uuid, string> _playerInfo;
-};
+        private:
+            string _playerName;
+            bool _isReady;
+            bool _isLogOut;
+            tuple<boost::uuids::uuid, string> _playerInfo;
+    };
+}

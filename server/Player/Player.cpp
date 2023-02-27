@@ -1,4 +1,5 @@
 #include "../Include/Player/Player.hpp"
+using namespace Server;
 
 Player::Player(std::shared_ptr<boost::asio::ip::tcp::socket> socket, const string playerName)
 {

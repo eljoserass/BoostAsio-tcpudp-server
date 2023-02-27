@@ -1,9 +1,10 @@
 #include "../Include/Servers/TCPServer.hpp"
 #include "../Include/Room/RoomManager.hpp"
+using namespace Server;
 
 #define PORT 9999
 
-Server::Server(boost::asio::io_service &io_service) :
+TCPServer::TCPServer(boost::asio::io_service &io_service) :
     _io_service(io_service),
     _acceptor(io_service, tcp::endpoint(tcp::v4(), PORT)),
     _clients()
@@ -11,7 +12,7 @@ Server::Server(boost::asio::io_service &io_service) :
     start();
 }
 
-void Server::start()
+void TCPServer::start()
 {
     RoomManager* _RoomManager = new RoomManager();
     while (true) {
@@ -25,7 +26,7 @@ void Server::start()
     _RoomManager->_GameManager->joinThreads();
 }
 
-void Server::_read(vector<std::shared_ptr<tcp::socket>> &clients)
+void TCPServer::_read(vector<std::shared_ptr<tcp::socket>> &clients)
 {
     for (auto &client : clients) {
         boost::asio::streambuf buf;
@@ -41,8 +42,9 @@ void Server::_read(vector<std::shared_ptr<tcp::socket>> &clients)
     }
 }
 
-void Server::handleRead(char *data, std::shared_ptr<boost::asio::ip::tcp::socket> socket)
+void TCPServer::handleRead(char *data, std::shared_ptr<boost::asio::ip::tcp::socket> socket)
 {
+    string result;
     char *command = std::strtok(data, ";");
     char *param = std::strtok(nullptr, ":");
     char *param2 = std::strtok(nullptr, ":");
@@ -50,9 +52,12 @@ void Server::handleRead(char *data, std::shared_ptr<boost::asio::ip::tcp::socket
     if (strcmp(command, "new_player") == 0)
         // e.g new_player;player_name
         _RoomManager->addPlayer(socket, param);
-    if (strcmp(command, "create_room") == 0)
+    if (strcmp(command, "create_room") == 0) {
+        result = "create_room;ok";
         _RoomManager->createRoom(param);
+    }
     if (strcmp(command, "delete_room") == 0) {
+        result = "delete_room";
         const char *roomId = param;
         boost::uuids::string_generator gen;
         boost::uuids::uuid roomUuid = gen(roomId);
@@ -60,6 +65,7 @@ void Server::handleRead(char *data, std::shared_ptr<boost::asio::ip::tcp::socket
     }
     if (strcmp(command, "add_player_room") == 0) {
         // e.g add_player_room;roomId:playerId
+        result = "add_player_room";
         const char *roomId = param;
         const char *playerId = param;
         boost::uuids::string_generator gen;
@@ -76,21 +82,19 @@ void Server::handleRead(char *data, std::shared_ptr<boost::asio::ip::tcp::socket
     }
     if (strcmp(data, "start_game") == 0)
         _RoomManager->startGame();
-    if (strcmp(command, "is_room_ready") == 0) {
-        const char *roomId = param;
-        boost::uuids::string_generator gen;
-        boost::uuids::uuid roomUuid = gen(roomId);
-        roomIsReady = _RoomManager->isRoomReadyByRoomId(roomUuid);
-    }
-    if (strcmp(data, "room_info") == 0)
-        _roomInfo = _RoomManager->getRoomInfo();
-    if (strcmp(command, "players_in_room") == 0) {
-        const char *roomId = param;
-        boost::uuids::string_generator gen;
-        boost::uuids::uuid roomUuid = gen(roomId);
-        _players = _RoomManager->getPlayersByRoomId(roomUuid);
+    // if (strcmp(command, "is_room_ready") == 0) {
+    //     bool roomIsReady;
+    //     const char *roomId = param;
+    //     boost::uuids::string_generator gen;
+    //     boost::uuids::uuid roomUuid = gen(roomId);
+    //     roomIsReady = _RoomManager->isRoomReadyByRoomId(roomUuid);
+    // }
+    if (strcmp(data, "room_info") == 0) {
+        vector<tuple<boost::uuids::uuid, string>> _roomsInfo;
+        _roomsInfo = _RoomManager->getRoomsInfo();
     }
     if (strcmp(command, "players_info") == 0) {
+        tuple<boost::uuids::uuid, string> _playerInfo;
         const char *roomId = param;
         boost::uuids::string_generator gen;
         boost::uuids::uuid roomUuid = gen(roomId);
@@ -100,11 +104,19 @@ void Server::handleRead(char *data, std::shared_ptr<boost::asio::ip::tcp::socket
         const char *playerId = param;
         boost::uuids::string_generator gen;
         boost::uuids::uuid playerUuid = gen(playerId);
-        _RoomManager->getPlayerReady(playerUuid);
+        _RoomManager->setPlayerReady(playerUuid);
     }
+    if (strcmp(command, "player_not_ready") == 0) {
+        const char *playerId = param;
+        boost::uuids::string_generator gen;
+        boost::uuids::uuid playerUuid = gen(playerId);
+        _RoomManager->setPlayerReady(playerUuid);
+    }
+    _sendToClient(socket, result);
+    // send al cliente
 }
 
-void Server::_send(const string &message)
+void TCPServer::_sendToClients(const string &message)
 {
     for (auto &client : _clients) {
         boost::system::error_code error;
@@ -112,4 +124,13 @@ void Server::_send(const string &message)
         if (error)
             cerr << "Error sending message to client: " << error.message() << endl;
     }
+}
+
+
+void TCPServer::_sendToClient(std::shared_ptr<boost::asio::ip::tcp::socket> socket, const string &message)
+{
+    boost::system::error_code error;
+    boost::asio::write(socket, boost::asio::buffer(message), error);
+    if (error)
+        cerr << "Error sending message to client: " << error.message() << endl;
 }

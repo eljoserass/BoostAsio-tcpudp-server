@@ -1,4 +1,5 @@
 #include "../Include/Game/GameManager.hpp"
+using namespace Server;
 
 void run_game_thread(Game *game)
 {

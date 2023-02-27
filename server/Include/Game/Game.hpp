@@ -20,18 +20,20 @@ class ECS {
         }
 };
 
-class Game {
-    public:
-        Game(int port);
-        void run(void);
-        boost::asio::io_context io_context;
-    private:
-        void run_ecs(std::shared_ptr<std::string> &clientMessage, std::shared_ptr<std::string>& ECSResponse);
-        int port_;
-        bool isRunning;
-        ECS ecs_;
-        UDPServer server_;
-        std::shared_ptr<std::string> ECSResponse_;
-        std::thread server_thread;
-        std::thread sender_thread;
-};
+namespace Server {
+    class Game {
+        public:
+            Game(int port);
+            void run(void);
+            boost::asio::io_context io_context;
+        private:
+            void run_ecs(std::shared_ptr<std::string> &clientMessage, std::shared_ptr<std::string>& ECSResponse);
+            int port_;
+            bool isRunning;
+            ECS ecs_;
+            UDPServer server_;
+            std::shared_ptr<std::string> ECSResponse_;
+            std::thread server_thread;
+            std::thread sender_thread;
+    };
+}

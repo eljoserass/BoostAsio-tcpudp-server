@@ -1,4 +1,5 @@
 #include "../Include/Game/Game.hpp"
+using namespace Server;
 
 void run_server(UDPServer &server)
 {

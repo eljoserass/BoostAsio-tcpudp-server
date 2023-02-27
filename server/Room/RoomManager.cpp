@@ -1,4 +1,5 @@
 #include "../Include/Room/RoomManager.hpp"
+using namespace Server;
 
 RoomManager::RoomManager()
 {
@@ -109,20 +110,22 @@ void RoomManager::sendInfoByPlayersId(vector<boost::uuids::uuid> playerIds, cons
     }
 }
 
-void RoomManager::getPlayerReady(boost::uuids::uuid playerId)
-{
-    for (int i = 0; i < _players.size(); i++) {
-        if (_players[i]._id == playerId)
-            _players[i].setIsReady();
-    }
-}
+// void RoomManager::getPlayerReady(boost::uuids::uuid playerId)
+// {
+//     for (int i = 0; i < _players.size(); i++) {
+//         if (_players[i]._id == playerId)
+//             _players[i].setIsReady();
+//     }
+// }
 
-tuple<boost::uuids::uuid, string> RoomManager::getRoomInfo(void)
+vector<tuple<boost::uuids::uuid, string>> RoomManager::getRoomsInfo(void)
 {
+    vector<tuple<boost::uuids::uuid, string>> _roomsInfo;
+
     for (int i = 0; i < _rooms.size(); i++) {
-        _roomInfo = _rooms[i].getRoomInfo();
+        _roomsInfo.push_back(_rooms[i].getRoomInfo());
     }
-    return _roomInfo;
+    return _roomsInfo;
 }
 
 tuple<boost::uuids::uuid, string> RoomManager::getPlayersInfoByRoomId(boost::uuids::uuid roomId)
