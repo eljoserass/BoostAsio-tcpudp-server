@@ -1,3 +1,6 @@
 [submodule "lib/boost"]
 	path = lib/boost
 	url = git@github.com:boostorg/boost.git
+[submodule "lib/boost_all"]
+	path = lib/boost_all
+	url = https://github.com/boostorg/boost
