@@ -2,6 +2,8 @@
 
 #include "./ClientData.hpp"
 
+namespace ClientController {
+
 class TCPClient {
     public:
         TCPClient(std::string host, int port);
@@ -20,3 +22,5 @@ class TCPClient {
         void _send(const std::string &message);
         void _receive();
 };
+
+}

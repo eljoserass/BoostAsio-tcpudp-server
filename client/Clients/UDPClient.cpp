@@ -1,5 +1,7 @@
 #include "ClientServer.hpp"
 
+using namespace ClientController;
+
 UDPClient::UDPClient(std::string host, std::string port, std::shared_ptr<std::string>& gameState): resolver_(io_context_), socket_(io_context_)
 {
     receiver_endpoint_ = *resolver_.resolve(udp::v4(), host.c_str(), port.c_str()).begin();
