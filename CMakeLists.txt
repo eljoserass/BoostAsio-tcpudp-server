@@ -24,16 +24,6 @@ set(Boost_INCLUDE_DIR ${BOOST_ROOT})
 set(Boost_NO_SYSTEM_PATHS ON)
 set(Boost_DEBUG ON)
 
-# set(BOOST_REQD_SUBMODULES
-#     "tools/cmake;libs/integer;libs/move;libs/concept_check;libs/exception;libs/"
-#     "libs/any"
-#     "libs/asio;libs/align;libs/bind;libs/chrono;libs/config;libs/coroutine;libs/date_time;libs/function;libs/regex;libs/smart_ptr;libs/type_traits;libs/utility"
-#     "libs/array;libs/assert;libs/config;libs/core;libs/static_assert;libs/throw_exception"
-#     "libs/algorithm"
-#     "libs/system"
-#     "libs/endian;libs/phoenix;libs/proto"
-#     )
-
 Set(FETCHCONTENT_QUIET FALSE)
 FetchContent_Declare(
     boost
