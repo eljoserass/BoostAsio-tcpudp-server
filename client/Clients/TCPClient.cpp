@@ -1,5 +1,7 @@
 #include "ClientServer.hpp"
 
+using namespace ClientController;
+
 TCPClient::TCPClient(std::string host, int port) : _socket(_io_service)
 {
     _socket.connect(tcp::endpoint(boost::asio::ip::address::from_string(host.c_str()), port));

@@ -8,6 +8,8 @@
 using boost::asio::ip::udp;
 using boost::asio::ip::tcp;
 
+namespace ClientController {
+
 class UDPClient {
     public:
         UDPClient(std::string host, std::string port, std::shared_ptr<std::string>& gameState);
@@ -22,3 +24,4 @@ class UDPClient {
         udp::socket socket_;
 
 };
+}

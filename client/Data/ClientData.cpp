@@ -1,5 +1,7 @@
 #include "ClientData.hpp"
 
+using namespace ClientController;
+
 ClientData::ClientData()
 {
     currentRoomName = std::string("");
