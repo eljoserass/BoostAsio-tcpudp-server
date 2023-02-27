@@ -8,6 +8,9 @@
 using boost::asio::ip::udp;
 using boost::asio::ip::tcp;
 
+
+namespace ClientController {
+
 class ClientData {
     public:
 
@@ -27,3 +30,5 @@ class ClientData {
         bool isConnected;
 
 };
+
+}   

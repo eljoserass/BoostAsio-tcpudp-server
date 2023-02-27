@@ -1,5 +1,7 @@
 #include "ClientServer.hpp"
 
+using namespace ClientController;
+
 ClientServer::ClientServer()
 {
     isUDPRunning_ = std::make_shared<bool>(bool(false));
