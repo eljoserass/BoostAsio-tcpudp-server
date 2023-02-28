@@ -22,6 +22,7 @@ void TCPServer::start()
 
         cout << "New client " << client.get() << " connected" << endl;
         _read(_clients);
+        _RoomManager->startGame();
     }
     _RoomManager->_GameManager->joinThreads();
 }
@@ -82,10 +83,6 @@ void TCPServer::handleRead(char *data, std::shared_ptr<boost::asio::ip::tcp::soc
         boost::uuids::string_generator gen;
         boost::uuids::uuid playerUuid = gen(playerId);
         _RoomManager->removePlayerFromRoom(playerUuid);
-    }
-    if (strcmp(data, "start_game") == 0) {
-        result = "start_game;ok";
-        _RoomManager->startGame();
     }
     // if (strcmp(command, "is_room_ready") == 0) {
     //     bool roomIsReady;
