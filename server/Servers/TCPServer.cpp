@@ -113,14 +113,14 @@ void TCPServer::handleRead(char *data, std::shared_ptr<boost::asio::ip::tcp::soc
         _playersInfo = _RoomManager->getPlayersInfoByRoomId(roomUuid);
     }
     if (strcmp(command, "player_ready") == 0) {
-        result = "player_ready;" + boost::lexical_cast<std::string>(param) + ":true";
+        result = "player_ready;" + boost::lexical_cast<std::string>(param) + ":ok";
         const char *playerId = param;
         boost::uuids::string_generator gen;
         boost::uuids::uuid playerUuid = gen(playerId);
         _RoomManager->setPlayerReady(playerUuid);
     }
     if (strcmp(command, "player_not_ready") == 0) {
-        result = "player_ready;" + boost::lexical_cast<std::string>(param) + ":false";
+        result = "player_ready;" + boost::lexical_cast<std::string>(param) + ":ok";
         const char *playerId = param;
         boost::uuids::string_generator gen;
         boost::uuids::uuid playerUuid = gen(playerId);
