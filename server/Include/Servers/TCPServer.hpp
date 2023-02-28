@@ -20,6 +20,7 @@ namespace Server {
             vector<string> _players;
 
         private:
+            void _parse_commands();
             void _read(std::vector<std::shared_ptr<tcp::socket>> &clients);
             void _sendToClients(const string &message);
             void _sendToClient(std::shared_ptr<boost::asio::ip::tcp::socket> socket, const string &message);
