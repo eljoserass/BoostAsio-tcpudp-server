@@ -4,7 +4,7 @@ project(client)
 
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories(Include ${CMAKE_BINARY_DIR}/_deps/boost-src/libs/array/include)
+include_directories(Include)
 
 set(SRC
     Clients/TCPClient.cpp
@@ -22,6 +22,6 @@ set(HEADERS
 
 add_library(client STATIC ${SRC} ${HEADERS})
 
-target_link_libraries(client PRIVATE Boost::array Boost::asio Boost::uuid)
+target_link_libraries(client PUBLIC Boost::array Boost::asio Boost::uuid)
 
 target_include_directories(client PUBLIC publicInclude)
