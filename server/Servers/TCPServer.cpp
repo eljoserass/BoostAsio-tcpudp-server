@@ -52,9 +52,9 @@ void TCPServer::handleRead(char *data, std::shared_ptr<boost::asio::ip::tcp::soc
     char *param2 = std::strtok(nullptr, ":");
 
     if (strcmp(command, "new_player") == 0) {
-        result = "new_player;ok";
-        // e.g new_player;player_name
-        _RoomManager->addPlayer(socket, param);
+        boost::uuids::uuid playerId = _RoomManager->addPlayer(socket, param);
+        std::string playerIdStr = boost::uuids::to_string(playerId);
+        result = "new_player;" + playerIdStr;
     }
     if (strcmp(command, "create_room") == 0) {
         result = "create_room;ok";
