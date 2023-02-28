@@ -49,7 +49,3 @@ if (tcud_BUILD_SERVER)
     message(STATUS "Building tcud's Server module.")
     add_subdirectory(server)
 endif()
-
-add_executable(p main.cpp)
-
-target_link_libraries(p PRIVATE tcud::client)
