@@ -1,4 +1,5 @@
 #include "../Include/Player/Player.hpp"
+using namespace Server;
 
 Player::Player(std::shared_ptr<boost::asio::ip::tcp::socket> socket, const string playerName)
 {
@@ -30,6 +31,11 @@ string Player::getPlayerName()
 void Player::setIsReady()
 {
     _isReady = true;
+}
+
+void Player::setIsNotReady()
+{
+    _isReady = false;
 }
 
 bool Player::getIsReady()

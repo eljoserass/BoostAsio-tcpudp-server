@@ -1,4 +1,5 @@
 #include "../Include/Servers/UDPServer.hpp"
+using namespace Server;
 
 UDPServer::UDPServer(int port) : socket_(io_context, udp::endpoint(udp::v4(), port)), mtx(), io_context()
 {

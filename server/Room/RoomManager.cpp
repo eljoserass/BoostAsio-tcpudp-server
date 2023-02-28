@@ -1,4 +1,5 @@
 #include "../Include/Room/RoomManager.hpp"
+using namespace Server;
 
 RoomManager::RoomManager()
 {
@@ -16,14 +17,6 @@ void RoomManager::deleteRoomById(boost::uuids::uuid id)
         if (get<0>(_rooms[i].getRoomInfo()) == id)
             _rooms.erase(_rooms.begin() + i);
     }
-}
-
-vector<string> RoomManager::getRoomsName()
-{
-    for (unsigned int i = 0; i < _rooms.size(); i++) {
-        _roomNames.push_back(_rooms[i].getRoomName());
-    }
-    return _roomNames;
 }
 
 vector<string> RoomManager::getPlayersByRoomId(boost::uuids::uuid roomId)
@@ -115,4 +108,39 @@ void RoomManager::sendInfoByPlayersId(vector<boost::uuids::uuid> playerIds, cons
                 std::cerr << "Error sending message to client: " << error.message() << endl;
         }
     }
+}
+
+void RoomManager::setPlayerReady(boost::uuids::uuid playerId)
+{
+    for (int i = 0; i < _players.size(); i++) {
+        if (_players[i]._id == playerId)
+            _players[i].setIsReady();
+    }
+}
+
+void RoomManager::setPlayerNotReady(boost::uuids::uuid playerId)
+{
+    for (int i = 0; i < _players.size(); i++) {
+        if (_players[i]._id == playerId)
+            _players[i].setIsNotReady();
+    }
+}
+
+vector<tuple<boost::uuids::uuid, string>> RoomManager::getRoomsInfo(void)
+{
+    vector<tuple<boost::uuids::uuid, string>> _roomsInfo;
+
+    for (int i = 0; i < _rooms.size(); i++) {
+        _roomsInfo.push_back(_rooms[i].getRoomInfo());
+    }
+    return _roomsInfo;
+}
+
+vector<tuple<boost::uuids::uuid, string>> RoomManager::getPlayersInfoByRoomId(boost::uuids::uuid roomId)
+{
+    for (int i = 0; i < _players.size(); i++) {
+        if (_players[i].currentRoomId == roomId)
+            _playerInfo.push_back(_players[i].getPlayerInfo());
+    }
+    return _playerInfo;
 }
