@@ -4,7 +4,7 @@ project(client)
 
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories(Include ${CMAKE_BINARY_DIR}/_deps/boost-src/libs)
+include_directories(Include ${CMAKE_BINARY_DIR}/_deps/boost-src/libs/array/include)
 
 set(SRC
     Clients/TCPClient.cpp
