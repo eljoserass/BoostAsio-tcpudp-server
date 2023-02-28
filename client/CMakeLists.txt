@@ -4,7 +4,7 @@ project(client)
 
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories(Include)
+include_directories(Include ${Boost_INCLUDE_DIRS})
 
 set(SRC
     Clients/TCPClient.cpp
