@@ -30,6 +30,7 @@ namespace Server {
             void setPlayerName(const string &playerName);
             string getPlayerName(void);
             void setIsReady(void);
+            void setIsNotReady(void);
             bool getIsReady(void);
             void setPlayerInfo(const string &playerName, boost::uuids::uuid id);
             tuple<boost::uuids::uuid, string> getPlayerInfo(void);

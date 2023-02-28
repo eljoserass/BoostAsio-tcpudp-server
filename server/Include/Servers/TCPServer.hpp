@@ -1,5 +1,6 @@
 #pragma once
 #include <boost/asio.hpp>
+#include <boost/lexical_cast.hpp>
 #include "Room/RoomManager.hpp"
 
 using namespace boost::asio;

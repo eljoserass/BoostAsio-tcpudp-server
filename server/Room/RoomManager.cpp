@@ -110,13 +110,21 @@ void RoomManager::sendInfoByPlayersId(vector<boost::uuids::uuid> playerIds, cons
     }
 }
 
-// void RoomManager::getPlayerReady(boost::uuids::uuid playerId)
-// {
-//     for (int i = 0; i < _players.size(); i++) {
-//         if (_players[i]._id == playerId)
-//             _players[i].setIsReady();
-//     }
-// }
+void RoomManager::setPlayerReady(boost::uuids::uuid playerId)
+{
+    for (int i = 0; i < _players.size(); i++) {
+        if (_players[i]._id == playerId)
+            _players[i].setIsReady();
+    }
+}
+
+void RoomManager::setPlayerNotReady(boost::uuids::uuid playerId)
+{
+    for (int i = 0; i < _players.size(); i++) {
+        if (_players[i]._id == playerId)
+            _players[i].setIsNotReady();
+    }
+}
 
 vector<tuple<boost::uuids::uuid, string>> RoomManager::getRoomsInfo(void)
 {
@@ -128,11 +136,11 @@ vector<tuple<boost::uuids::uuid, string>> RoomManager::getRoomsInfo(void)
     return _roomsInfo;
 }
 
-tuple<boost::uuids::uuid, string> RoomManager::getPlayersInfoByRoomId(boost::uuids::uuid roomId)
+vector<tuple<boost::uuids::uuid, string>> RoomManager::getPlayersInfoByRoomId(boost::uuids::uuid roomId)
 {
     for (int i = 0; i < _players.size(); i++) {
         if (_players[i].currentRoomId == roomId)
-            _playerInfo = _players[i].getPlayerInfo();
+            _playerInfo.push_back(_players[i].getPlayerInfo());
     }
     return _playerInfo;
 }

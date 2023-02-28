@@ -33,6 +33,11 @@ void Player::setIsReady()
     _isReady = true;
 }
 
+void Player::setIsNotReady()
+{
+    _isReady = false;
+}
+
 bool Player::getIsReady()
 {
     return _isReady;

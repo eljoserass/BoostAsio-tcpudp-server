@@ -25,13 +25,13 @@ namespace Server {
             void sendInfoByPlayersId(vector<boost::uuids::uuid> playerIds, const string &message);
             void setPlayerReady(boost::uuids::uuid playerId);
             void setPlayerNotReady(boost::uuids::uuid playerId);
-            tuple<boost::uuids::uuid, string> getPlayersInfoByRoomId(boost::uuids::uuid roomId);
+            vector<tuple<boost::uuids::uuid, string>> getPlayersInfoByRoomId(boost::uuids::uuid roomId);
 
             vector<Player> _players;
             GameManager *_GameManager;
 
         private:
             vector<Room> _rooms;
-            tuple<boost::uuids::uuid, string> _playerInfo;
+            vector<tuple<boost::uuids::uuid, string>> _playerInfo;
     };
 }
