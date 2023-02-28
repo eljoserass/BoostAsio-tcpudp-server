@@ -14,7 +14,7 @@ namespace Server {
             ~RoomManager() {};
             void createRoom(const string roomName);
             void deleteRoomById(boost::uuids::uuid id);
-            vector<tuple<boost::uuids::uuid, string>> RoomManager::getRoomsInfo(void);
+            vector<tuple<boost::uuids::uuid, string>> getRoomsInfo(void);
             vector<string> getPlayersByRoomId(boost::uuids::uuid roomId);
             boost::uuids::uuid addPlayer(std::shared_ptr<boost::asio::ip::tcp::socket> socket, const string playerName);
             void addPlayerToRoom(boost::uuids::uuid roomId, boost::uuids::uuid playerId);

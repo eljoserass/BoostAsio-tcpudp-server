@@ -25,6 +25,7 @@ void TCPServer::start()
         _RoomManager->startGame();
     }
     _RoomManager->_GameManager->joinThreads();
+    delete _RoomManager;
 }
 
 void TCPServer::_read(vector<std::shared_ptr<tcp::socket>> &clients)
@@ -39,7 +40,7 @@ void TCPServer::_read(vector<std::shared_ptr<tcp::socket>> &clients)
             else
                 cout << "Error: " << ec.message() << "\n";
         });
-        handleRead(data, client);
+        handleRead(data, client); // try to put it inside
     }
 }
 
@@ -142,7 +143,7 @@ void TCPServer::_sendToClients(const string &message)
 void TCPServer::_sendToClient(std::shared_ptr<boost::asio::ip::tcp::socket> socket, const string &message)
 {
     boost::system::error_code error;
-    boost::asio::write(socket, boost::asio::buffer(message), error);
+    boost::asio::write(*socket, boost::asio::buffer(message), error);
     if (error)
         cerr << "Error sending message to client: " << error.message() << endl;
 }
