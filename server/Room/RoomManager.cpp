@@ -1,7 +1,7 @@
 #include "../Include/Room/RoomManager.hpp"
 using namespace Server;
 
-RoomManager::RoomManager()
+RoomManager::RoomManager() : _players()
 {
     _GameManager = new GameManager();
 }
@@ -23,9 +23,9 @@ vector<string> RoomManager::getPlayersByRoomId(boost::uuids::uuid roomId)
 {
     vector<string> result;
 
-    for (int i = 0; i < _players.size(); i++) {
-        if (_players[i]->currentRoomId == roomId)
-            result.push_back(_players[i]->getPlayerName());
+    for (auto &player: _players) {
+        if (player.currentRoomId == roomId)
+            result.push_back(player.getPlayerName());
     }
     return result;
 }
@@ -45,27 +45,34 @@ void RoomManager::startGame()
 
 boost::uuids::uuid RoomManager::addPlayer(std::shared_ptr<boost::asio::ip::tcp::socket> socket, const string playerName)
 {
-    Player player(socket, playerName);
-    Player *playerptr = new Player(socket, playerName);
-    // _players.push_back(playerptr);
-    std::cout << "addPlayer" <<std::endl;
-    return player.getPlayerId();
+   
+    // Player *playerptr = new Player(socket, playerName);
+    Player *player = new Player(socket, playerName);
+    _players.push_back(*player);
+    std::cout << "addPlayer" << std::endl;
+    return _players.back().getPlayerId();
+    // return _players[_players.size() -1]->getPlayerId();
 }
 
 void RoomManager::addPlayerToRoom(boost::uuids::uuid roomId, boost::uuids::uuid playerId)
 {
-    for (int i = 0; i < _players.size(); i++) {
-        if (_players[i]->getPlayerId() == playerId)
-            _players[i]->currentRoomId = roomId;
+    for (auto &player: _players) {
+        if (player.getPlayerId() == playerId)
+            player.currentRoomId = roomId;
     }
 }
 
 void RoomManager::removePlayerFromRoom(boost::uuids::uuid playerId)
 {
-    for (int i = 0; i < _players.size(); i++) {
-        if (_players[i]->getPlayerId() == playerId)
-            _players[i]->currentRoomId = boost::uuids::nil_uuid();
+    for (auto &player: _players) {
+        if(player.getPlayerId() == playerId) {
+            player.currentRoomId = boost::uuids::nil_uuid();
+        }
     }
+    // for (int i = 0; i < _players.size(); i++) {
+    //     if (_players[i]->getPlayerId() == playerId)
+    //         _players[i]->currentRoomId = boost::uuids::nil_uuid();
+    // }
 }
 
 bool RoomManager::isRoomReadyByRoomId(boost::uuids::uuid roomId)
@@ -73,13 +80,19 @@ bool RoomManager::isRoomReadyByRoomId(boost::uuids::uuid roomId)
     int players_ready = 0;
     int players_in_room = 0;
     
-    for (int i = 0; i < _players.size(); i++) {
-        if (_players[i]->currentRoomId == roomId)
+
+    for (auto &player: _players) {
+        if (player.currentRoomId == roomId) {
             players_in_room++;
+        }
     }
-    for (int j = 0; j < _players.size(); j++) {
-        if (_players[j]->currentRoomId == roomId) {
-            if (_players[j]->getIsReady() == true)
+    // for (int i = 0; i < _players.size(); i++) {
+    //     if (_players[i]->currentRoomId == roomId)
+    //         players_in_room++;
+    // }
+    for (auto &player: _players) {
+        if (player.currentRoomId == roomId) {
+            if (player.getIsReady() == true)
                 players_ready++;
             if (players_ready == players_in_room)
                 return true;
@@ -92,9 +105,9 @@ vector<boost::uuids::uuid> RoomManager::getPlayersIdByRoomId(boost::uuids::uuid 
 {
     vector<boost::uuids::uuid> playerIds;
 
-    for (int i = 0; i < _players.size(); i++) {
-        if (_players[i]->currentRoomId == roomId)
-            playerIds.push_back(_players[i]->getPlayerId());
+    for (auto &player: _players) {
+        if (player.currentRoomId == roomId)
+            playerIds.push_back(player.getPlayerId());
     }
     return playerIds;
 }
@@ -102,9 +115,9 @@ vector<boost::uuids::uuid> RoomManager::getPlayersIdByRoomId(boost::uuids::uuid 
 void RoomManager::sendInfoByPlayersId(vector<boost::uuids::uuid> playerIds, const string &message)
 {
     for (int i = 0; i < playerIds.size(); i++) {
-        for (int i = 0; i < _players.size(); i++) {
+        for (auto &player: _players) {
             boost::system::error_code error;
-            boost::asio::write(*_players[i]->socket, boost::asio::buffer(message), error);
+            boost::asio::write(*player.socket, boost::asio::buffer(message), error);
             if (error)
                 std::cerr << "Error sending message to client: " << error.message() << endl;
         }
@@ -113,17 +126,17 @@ void RoomManager::sendInfoByPlayersId(vector<boost::uuids::uuid> playerIds, cons
 
 void RoomManager::setPlayerReady(boost::uuids::uuid playerId)
 {
-    for (int i = 0; i < _players.size(); i++) {
-        if (_players[i]->_id == playerId)
-            _players[i]->setIsReady();
+    for (auto &player: _players) {
+        if (player._id == playerId)
+            player.setIsReady();
     }
 }
 
 void RoomManager::setPlayerNotReady(boost::uuids::uuid playerId)
 {
-    for (int i = 0; i < _players.size(); i++) {
-        if (_players[i]->_id == playerId)
-            _players[i]->setIsNotReady();
+    for (auto &player: _players) {
+        if (player._id == playerId)
+            player.setIsNotReady();
     }
 }
 
@@ -139,9 +152,9 @@ vector<tuple<boost::uuids::uuid, string>> RoomManager::getRoomsInfo(void)
 
 vector<tuple<boost::uuids::uuid, string>> RoomManager::getPlayersInfoByRoomId(boost::uuids::uuid roomId)
 {
-    for (int i = 0; i < _players.size(); i++) {
-        if (_players[i]->currentRoomId == roomId)
-            _playerInfo.push_back(_players[i]->getPlayerInfo());
+    for (auto &player: _players) {
+        if (player.currentRoomId == roomId)
+            _playerInfo.push_back(player.getPlayerInfo());
     }
     return _playerInfo;
 }

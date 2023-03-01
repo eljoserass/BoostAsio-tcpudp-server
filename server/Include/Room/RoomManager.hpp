@@ -27,7 +27,7 @@ namespace Server {
             void setPlayerNotReady(boost::uuids::uuid playerId);
             vector<tuple<boost::uuids::uuid, string>> getPlayersInfoByRoomId(boost::uuids::uuid roomId);
 
-            vector<Player*> _players;
+            vector<Player> _players;
             GameManager *_GameManager;
 
         private:

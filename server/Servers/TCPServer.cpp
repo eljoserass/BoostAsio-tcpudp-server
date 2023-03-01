@@ -10,12 +10,12 @@ TCPServer::TCPServer(boost::asio::io_service &io_service) :
     _acceptor(io_service, tcp::endpoint(tcp::v4(), PORT)),
     _clients()
 {
+    _RoomManager = new RoomManager();
     start();
 }
 
 void TCPServer::start()
 {
-    RoomManager* _RoomManager = new RoomManager();
     while (true) {
         auto client = std::make_shared<tcp::socket>(_io_service);
         _acceptor.accept(*client);
@@ -26,7 +26,7 @@ void TCPServer::start()
         _RoomManager->startGame();
     }
     _RoomManager->_GameManager->joinThreads();
-    delete _RoomManager;
+   
 }
 
 void TCPServer::_read(vector<std::shared_ptr<tcp::socket>> &clients)
@@ -164,6 +164,7 @@ void TCPServer::handleRead(char *data, std::shared_ptr<boost::asio::ip::tcp::soc
             _RoomManager->setPlayerNotReady(playerUuid);
         }
         _sendToClient(socket, result);
+        std::cout << "send to client" << std::endl;
     }
     data = NULL;
 }
