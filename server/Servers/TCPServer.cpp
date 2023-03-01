@@ -26,7 +26,7 @@ void TCPServer::start()
         _RoomManager->startGame();
     }
     _RoomManager->_GameManager->joinThreads();
-   
+    delete _RoomManager;
 }
 
 void TCPServer::_read(vector<std::shared_ptr<tcp::socket>> &clients)
@@ -86,9 +86,7 @@ void TCPServer::handleRead(char *data, std::shared_ptr<boost::asio::ip::tcp::soc
         // std::cout << "command: " << command << " param: " << param << " param2 " << param2 << std::endl;
 
         if (strcmp(command, "new_player") == 0) {
-            
             boost::uuids::uuid playerId = _RoomManager->addPlayer(socket, param);
-            std::cout << "hola1" << std::endl;
             std::string playerIdStr = boost::uuids::to_string(playerId);
             result = "new_player;" + playerIdStr;
         }
@@ -105,7 +103,6 @@ void TCPServer::handleRead(char *data, std::shared_ptr<boost::asio::ip::tcp::soc
         }
         if (strcmp(command, "add_player_room") == 0) {
             // e.g add_player_room;roomId:playerId
-            
             const char *roomId = param;
             const char *playerId = param;
             boost::uuids::string_generator gen;
@@ -144,7 +141,13 @@ void TCPServer::handleRead(char *data, std::shared_ptr<boost::asio::ip::tcp::soc
             boost::uuids::string_generator gen;
             boost::uuids::uuid roomUuid = gen(roomId);
             for (int i = 0; i < _playersInfo.size(); i++) {
-                result += std::get<1>(_playersInfo[i]) + ":" + boost::lexical_cast<std::string>(std::get<0>(_playersInfo[i])) + ";";
+                bool isReady = _RoomManager->getPlayerReady(std::get<0>(_playersInfo[i]));
+                string readyString;
+                if (isReady)
+                    readyString = "ready";
+                else
+                    readyString = "notready";
+                result += std::get<1>(_playersInfo[i]) + ":" + boost::lexical_cast<std::string>(std::get<0>(_playersInfo[i])) + ":" + readyString + ";";
             }
             result = "players_info;" + result.substr(0, result.size() - 1);
             _playersInfo = _RoomManager->getPlayersInfoByRoomId(roomUuid);
@@ -164,7 +167,6 @@ void TCPServer::handleRead(char *data, std::shared_ptr<boost::asio::ip::tcp::soc
             _RoomManager->setPlayerNotReady(playerUuid);
         }
         _sendToClient(socket, result);
-        std::cout << "send to client" << std::endl;
     }
     data = NULL;
 }

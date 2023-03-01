@@ -24,6 +24,7 @@ namespace Server {
             vector<boost::uuids::uuid> getPlayersIdByRoomId(boost::uuids::uuid roomId);
             void sendInfoByPlayersId(vector<boost::uuids::uuid> playerIds, const string &message);
             void setPlayerReady(boost::uuids::uuid playerId);
+            bool getPlayerReady(boost::uuids::uuid playerId);
             void setPlayerNotReady(boost::uuids::uuid playerId);
             vector<tuple<boost::uuids::uuid, string>> getPlayersInfoByRoomId(boost::uuids::uuid roomId);
 

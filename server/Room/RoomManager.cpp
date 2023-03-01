@@ -1,7 +1,7 @@
 #include "../Include/Room/RoomManager.hpp"
 using namespace Server;
 
-RoomManager::RoomManager() : _players()
+RoomManager::RoomManager() : _players(), _rooms()
 {
     _GameManager = new GameManager();
 }
@@ -122,6 +122,17 @@ void RoomManager::sendInfoByPlayersId(vector<boost::uuids::uuid> playerIds, cons
                 std::cerr << "Error sending message to client: " << error.message() << endl;
         }
     }
+}
+
+bool RoomManager::getPlayerReady(boost::uuids::uuid playerId)
+{
+    bool isReady;
+
+    for (auto &player: _players) {
+        if (player._id == playerId)
+            isReady = player.getIsReady();
+    }
+    return isReady;
 }
 
 void RoomManager::setPlayerReady(boost::uuids::uuid playerId)
