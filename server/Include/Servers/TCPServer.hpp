@@ -19,9 +19,8 @@ namespace Server {
 
             vector<string> _players;
 
-        private:
             void _parse_commands();
-            void _read(std::vector<std::shared_ptr<tcp::socket>> &clients);
+            void _read();
             void _sendToClients(const string &message);
             void _sendToClient(std::shared_ptr<boost::asio::ip::tcp::socket> socket, const string &message);
             void handleRead(char *data, std::shared_ptr<boost::asio::ip::tcp::socket> socket);
@@ -30,5 +29,6 @@ namespace Server {
             tcp::acceptor _acceptor;
             std::vector<std::shared_ptr<tcp::socket>> _clients;
             RoomManager *_RoomManager;
+            std::thread read_thread;
     };
 }

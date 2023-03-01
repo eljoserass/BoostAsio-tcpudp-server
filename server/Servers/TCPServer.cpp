@@ -5,12 +5,20 @@ using namespace Server;
 
 #define PORT 9999
 
+void run_thread(TCPServer &server){
+    while (true) {
+        server._read();
+        server._RoomManager->startGame();
+    }
+}
+
 TCPServer::TCPServer(boost::asio::io_service &io_service) :
     _io_service(io_service),
     _acceptor(io_service, tcp::endpoint(tcp::v4(), PORT)),
     _clients()
 {
     _RoomManager = new RoomManager();
+    read_thread = std::thread(run_thread, std::ref(*this));
     start();
 }
 
@@ -22,16 +30,18 @@ void TCPServer::start()
         _clients.push_back(client);
 
         cout << "New client " << client.get() << " connected" << endl;
-        _read(_clients);
-        _RoomManager->startGame();
+        // _read();
+        
     }
+    read_thread.join();
     _RoomManager->_GameManager->joinThreads();
+    
    
 }
 
-void TCPServer::_read(vector<std::shared_ptr<tcp::socket>> &clients)
+void TCPServer::_read()
 {
-    for (auto &client : clients) {
+    for (auto &client : _clients) {
         boost::asio::streambuf buf;
         char data[1024];
         boost::asio::mutable_buffer buffer = boost::asio::buffer(data, 1024);
@@ -39,10 +49,12 @@ void TCPServer::_read(vector<std::shared_ptr<tcp::socket>> &clients)
             if (!ec) {
                 cout << "Read " << bytes_transferred << " bytes\n";
                 data[bytes_transferred] = '\0';
+                handleRead(data, client);
             }
             else {
                 cout << "Error: " << ec.message() << "\n";
             }
+            std::cout << "hola" << std::endl;
         });
         handleRead(data, client);// try to put it inside
     }

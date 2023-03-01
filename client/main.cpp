@@ -46,9 +46,10 @@ int main(int argc, char **argv) {
 
         while (true) {
             sleep(1);
-            std::cout << "rooms available:" << std::endl;
             clientServer->fetchRooms();
+            std::cout << "playerID " << clientServer->clientData->clientId << std::endl;
             // clientServer->clientData->currentAvailableRooms.push_back(std::make_tuple("hola1", "hola2"));
+            std::cout << "rooms available:" << std::endl;
             for (auto& room: clientServer->clientData->currentAvailableRooms) {
                 std::cout << "["<< std::get<0>(room) << "]"<< std::endl;
             }
