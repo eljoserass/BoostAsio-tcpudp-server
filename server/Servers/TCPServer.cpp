@@ -35,13 +35,16 @@ void TCPServer::_read(vector<std::shared_ptr<tcp::socket>> &clients)
         boost::asio::streambuf buf;
         char data[1024];
         boost::asio::mutable_buffer buffer = boost::asio::buffer(data, 1024);
-        client->async_read_some(buffer, [](boost::system::error_code ec, size_t bytes_transferred) {
-            if (!ec)
+        client->async_read_some(buffer, [&](boost::system::error_code ec, size_t bytes_transferred) {
+            if (!ec) {
                 cout << "Read " << bytes_transferred << " bytes\n";
-            else
+                data[bytes_transferred] = '\0';
+            }
+            else {
                 cout << "Error: " << ec.message() << "\n";
+            }
         });
-        handleRead(data, client); // try to put it inside
+        handleRead(data, client);// try to put it inside
     }
 }
 
@@ -49,7 +52,7 @@ void TCPServer::handleRead(char *data, std::shared_ptr<boost::asio::ip::tcp::soc
 {
     std::cout << "received from client: " << data << std::endl;
 
-    string result;
+    std::string result("");
     std::vector<std::string> first_split;
     std::vector<std::string> second_split;
     std::vector<std::string> third_split;
@@ -57,10 +60,12 @@ void TCPServer::handleRead(char *data, std::shared_ptr<boost::asio::ip::tcp::soc
     char *param;
     char *param2;
 
-    result = "";
+    
     boost::split(first_split, std::string(data), boost::is_any_of("|"));
     for (int i = 0; i < first_split.size(); i++) {
-        std::cout << "first_split " << first_split[i] << "size " << first_split.size()<< std::endl;
+        result = "";
+        std::cout << "first_split " << first_split[i] <<  " size " << first_split.size() << std::endl;
+        
         // second_split.clear();
         // third_split.clear();
         boost::split(second_split, first_split[i], boost::is_any_of(";"));
@@ -69,18 +74,21 @@ void TCPServer::handleRead(char *data, std::shared_ptr<boost::asio::ip::tcp::soc
         // char *param = std::strtok(nullptr, ":");
         // char *param2 = std::strtok(nullptr, ":");
 
-        std::cout << "command: " << second_split.empty();
-
-
+        
         command = strdup(second_split[0].c_str());
-        param = strdup(third_split[1].c_str());
-        param2 = strdup(third_split[1].c_str());
 
+        if (third_split.size() > 1) {
+            param = strdup(third_split[0].c_str());
+            param2 = strdup(third_split[1].c_str());
+        }
 
+        
         // std::cout << "command: " << command << " param: " << param << " param2 " << param2 << std::endl;
 
         if (strcmp(command, "new_player") == 0) {
+            
             boost::uuids::uuid playerId = _RoomManager->addPlayer(socket, param);
+            std::cout << "hola1" << std::endl;
             std::string playerIdStr = boost::uuids::to_string(playerId);
             result = "new_player;" + playerIdStr;
         }
@@ -121,7 +129,7 @@ void TCPServer::handleRead(char *data, std::shared_ptr<boost::asio::ip::tcp::soc
         //     boost::uuids::uuid roomUuid = gen(roomId);
         //     roomIsReady = _RoomManager->isRoomReadyByRoomId(roomUuid);
         // }
-        if (strcmp(data, "room_info") == 0) {
+        if (strcmp(command, "room_info") == 0) {
             // rooms_info;room1:uuid;room2:uuid
             vector<tuple<boost::uuids::uuid, string>> _roomsInfo;
             for (int i = 0; i < _roomsInfo.size(); i++) {
@@ -157,6 +165,7 @@ void TCPServer::handleRead(char *data, std::shared_ptr<boost::asio::ip::tcp::soc
         }
         _sendToClient(socket, result);
     }
+    data = NULL;
 }
 
 void TCPServer::_sendToClients(const string &message)
