@@ -12,37 +12,47 @@ int main(int argc, char **argv) {
         // set tcp connection
         clientServer->setTcpPort("9999");
         // set name of player
-        clientServer->setPlayerName("name");
 
         // start the connection
         clientServer->run();
 
+        clientServer->setPlayerName("name");
         // create a room
         clientServer->createRoom("rowwwom");
 
-        // read avaialbe rooms to join
-        std::vector<std::string> rooms = clientServer->clientData->currentAvailableRooms;
+        // // read avaialbe rooms to join
+        // std::vector<std::tuple<std::string, std::string>> rooms = clientServer->clientData->currentAvailableRooms;
 
-        // get players in a room 
-        std::vector<std::tuple<std::string, bool>> playes_in_room = clientServer->clientData->currentRoomPlayers;
+        // // get players in a room 
+        // std::vector<std::string> playes_in_room = clientServer->clientData->currentRoomPlayersName;
 
-        // get out of room
-        clientServer->leaveRoom();
+        // // get out of room
+        // clientServer->leaveRoom();
 
-        // set a player is ready to play or not
-        clientServer->setReady(true);
+        // // set a player is ready to play or not
+        // clientServer->setReady(true);
 
-        // the connection was succesful when is true
-        bool isConnected = clientServer->clientData->isConnected;
+        // // the connection was succesful when is true
+        // bool isConnected = clientServer->clientData->isConnected;
 
-        // when a player enters in a room this is set to true
-        bool isInRoom = clientServer->clientData->isInRoom;
+        // // when a player enters in a room this is set to true
+        // bool isInRoom = clientServer->clientData->isInRoom;
 
-        // when all the players setReady(true), this will be true and have to change to the actual game screen
-        bool isInGame = clientServer->clientData->isInGame;
+        // // when all the players setReady(true), this will be true and have to change to the actual game screen
+        // bool isInGame = clientServer->clientData->isInGame;
 
-        // call it after your while(isWindowOpen)
-        clientServer->joinThread();
+        // // call it after your while(isWindowOpen)
+        // clientServer->joinThread();
+
+        while (true) {
+            sleep(1);
+            std::cout << "rooms available:" << std::endl;
+            clientServer->fetchRooms();
+            // clientServer->clientData->currentAvailableRooms.push_back(std::make_tuple("hola1", "hola2"));
+            for (auto& room: clientServer->clientData->currentAvailableRooms) {
+                std::cout << "["<< std::get<0>(room) << "]"<< std::endl;
+            }
+        }
 
     } catch (std::exception& e) {
         std::cerr << e.what() << std::endl;

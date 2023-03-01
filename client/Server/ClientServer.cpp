@@ -21,6 +21,7 @@ void ClientServer::startTcp()
     tcpClient_ = new TCPClient(host_, stoi(tcpPort_));
     std::cout << "tcp init" << std::endl;
     tcpClient_->run(isTCPRunning_, clientData);
+
 }
 
 void ClientServer::joinThread(void)
