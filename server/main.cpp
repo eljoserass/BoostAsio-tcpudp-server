@@ -5,7 +5,9 @@ int main()
 {
     boost::asio::io_service io_service;
 
-    TCPServer server(io_service);
+    AsyncTcpServer server(io_service, 9999);
+
+    io_service.run();
 
     return 0;
 }

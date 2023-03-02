@@ -22,13 +22,6 @@ void UDPServer::run(void)
     io_context.run();
 }
 
-// void UDPServer::remove_players() {
-//     std::map<udp::endpoint, bool>::iterator it
-//     for (const auto &client : clients_) {
-//         clients_.put(client.first, false)
-//     }
-// }
-
 void UDPServer::start_receive() {
     std::cout << "start_recieve" << std::endl;
     socket_.async_receive_from(

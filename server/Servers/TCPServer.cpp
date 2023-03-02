@@ -30,33 +30,45 @@ void TCPServer::start()
         _clients.push_back(client);
 
         cout << "New client " << client.get() << " connected" << endl;
-        // _read();
+       _read();
         
     }
     read_thread.join();
+    // auto newConnection = std::make_shared<tcp::socket>(m_acceptor.get_io_service());
+    // m_acceptor.async_accept(*newConnection, [this, newConnection](boost::system::error_code error) {
+    //     if (!error) {
+    //         std::cout << "Accepted connection from: " << newConnection->remote_endpoint() << std::endl;
+    //         _clients.push_back(newConnection->remote_endpoint());
+    //         startRead(newConnection);
+    //     }
+    //     startAccept();
+    // });
     _RoomManager->_GameManager->joinThreads();
-    
-   
 }
 
 void TCPServer::_read()
 {
     for (auto &client : _clients) {
-        boost::asio::streambuf buf;
+        // boost::asio::streambuf buf;
         char data[1024];
         boost::asio::mutable_buffer buffer = boost::asio::buffer(data, 1024);
-        client->async_read_some(buffer, [&](boost::system::error_code ec, size_t bytes_transferred) {
-            if (!ec) {
-                cout << "Read " << bytes_transferred << " bytes\n";
-                data[bytes_transferred] = '\0';
-                handleRead(data, client);
-            }
-            else {
-                cout << "Error: " << ec.message() << "\n";
-            }
-            std::cout << "hola" << std::endl;
-        });
-        handleRead(data, client);// try to put it inside
+        boost::asio::streambuf buf;
+        boost::asio::read_until (*client, buf, "\0");  // or '\0' if zero terminated
+        char* output = (char*)malloc(buf.size());
+        memcpy(output, boost::asio::buffer_cast<const void*>(buf.data()), buf.size());  
+        handleRead(output, client);
+        // client->async_read_some(buffer, [&](boost::system::error_code ec, size_t bytes_transferred) {
+        //     if (!ec) {
+        //         cout << "Read " << bytes_transferred << " bytes\n";
+        //         data[bytes_transferred] = '\0';
+        //         handleRead(data, client);
+        //     }
+        //     else {
+        //         cout << "Error: " << ec.message() << "\n";
+        //     }
+        //     std::cout << "hola" << std::endl;
+        // });
+        // handleRead(data, client);// try to put it inside
     }
 }
 
