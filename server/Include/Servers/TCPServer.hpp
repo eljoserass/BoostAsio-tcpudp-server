@@ -1,6 +1,7 @@
 #pragma once
 #include <boost/asio.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string.hpp>
 #include "RoomManager.hpp"
 
 using namespace boost::asio;
@@ -46,9 +47,76 @@ namespace Server {
             AsyncTcpServer(io_service& io_service, int port)
                 : ioService(io_service), m_acceptor(io_service, tcp::endpoint(tcp::v4(), port))
             {
+                _RoomManager = new RoomManager();
                 startAccept();
             }
-        boost::asio::io_service &ioService;
+
+            void callFunctions(std::string command, std::string param1, std::string param2)
+            {
+                if (command == "create_room") {
+                    cout << "room created\n";
+                    _RoomManager->createRoom(param1);
+                }
+                if (command == "delete_room") {
+                    boost::uuids::string_generator gen;
+                    boost::uuids::uuid roomUuid = gen(param1);
+                    _RoomManager->deleteRoomById(roomUuid);
+                }
+                if (command == "add_player_room") {
+                    // e.g add_player_room;roomId:playerId
+                    boost::uuids::string_generator gen;
+                    boost::uuids::uuid roomUuid = gen(param1);
+                    boost::uuids::uuid playerUuid = gen(param2);
+                    _RoomManager->addPlayerToRoom(roomUuid, playerUuid);
+                }
+                if (command == "remove_player_room") {
+                    boost::uuids::string_generator gen;
+                    boost::uuids::uuid playerUuid = gen(param1);
+                    _RoomManager->removePlayerFromRoom(playerUuid);
+                }
+                if (command == "room_info") {
+                    // rooms_info;room1:uuid;room2:uuid
+                    vector<tuple<boost::uuids::uuid, string>> _roomsInfo;
+                    _roomsInfo = _RoomManager->getRoomsInfo();
+                }
+                if (command == "players_info") {
+                    vector<tuple<boost::uuids::uuid, string>> _playersInfo;
+                    boost::uuids::string_generator gen;
+                    boost::uuids::uuid roomUuid = gen(param1);
+                    _playersInfo = _RoomManager->getPlayersInfoByRoomId(roomUuid);
+                }
+                if (command == "player_ready") {
+                    boost::uuids::string_generator gen;
+                    boost::uuids::uuid playerUuid = gen(param1);
+                    _RoomManager->setPlayerReady(playerUuid);
+                }
+                if (command == "player_not_ready") {
+                    boost::uuids::string_generator gen;
+                    boost::uuids::uuid playerUuid = gen(param1);
+                    _RoomManager->setPlayerNotReady(playerUuid);
+                }
+            }
+
+            void handleMessage(std::string message)
+            {
+                std::string result("");
+                std::vector<std::string> tokens;
+                boost::split(tokens, message, boost::is_any_of(":;"));
+                std::string command;
+                std::string param1;
+                std::string param2;
+
+                if (tokens.size() >= 2) {
+                    command = tokens[0];
+                    param1 = tokens[1];
+                    param2 = "";
+                    if (tokens.size() == 3)
+                        param2 = tokens[2];
+                }
+                callFunctions(command, param1, param2);
+            }
+
+            boost::asio::io_service &ioService;
         private:
             void startAccept() {
                 auto newConnection = std::make_shared<tcp::socket>(ioService);
@@ -70,6 +138,7 @@ namespace Server {
                         std::string message;
                         std::getline(input, message);
                         std::cout << "Received message: " << message << std::endl;
+                        handleMessage(message);
                         startRead(socket);
                     }
                     else {
@@ -78,9 +147,9 @@ namespace Server {
                 });
             }
 
+            RoomManager *_RoomManager;
             tcp::acceptor m_acceptor;
             std::set<tcp::endpoint> m_clients;
             io_service _ioService;
         };
-
 }
