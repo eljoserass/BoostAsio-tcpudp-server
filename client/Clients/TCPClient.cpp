@@ -20,7 +20,9 @@ void listen_from_TCP_server(tcp::socket& socket ,std::shared_ptr<bool>& isTcpRun
     boost::asio::streambuf buff;
     boost::system::error_code error;
     std::string data;
+    std::string past_data;
     while (*isTcpRunnig) {
+
         boost::asio::read_until(socket, buff, "\0", error);
         if (error == boost::asio::error::eof) {
             *isTcpRunnig = false;
@@ -30,40 +32,43 @@ void listen_from_TCP_server(tcp::socket& socket ,std::shared_ptr<bool>& isTcpRun
         std::cout << "received from server:" << data << std::endl; 
         std::vector<std::string> commands_response;
         std::vector<std::string> commands_response_variables;
-        boost::split(commands_response, data, boost::is_any_of(";"));
-        if (commands_response[0] == "new_player") {
-            clientData->clientId = commands_response[1];
-        }
-        if (commands_response[0] == "room_info") {
-            clientData->currentAvailableRooms.clear();
-            for (int i = 1; i < commands_response.size(); i++)
-                boost::split(commands_response_variables, commands_response[i], boost::is_any_of(":"));
-                clientData->currentAvailableRooms.push_back(std::make_tuple(commands_response_variables[0], commands_response_variables[1]));
-        }
-        if (commands_response[0] == "players_info") {
-            // fix this to be boolean !!!!!!!!!!!!!!!!!!!!
-            clientData->currentRoomPlayersName.clear();
-            for (int i = 1; i < commands_response.size(); i++)
-                boost::split(commands_response_variables, commands_response[i], boost::is_any_of(":"));
-                clientData->currentRoomPlayersName.push_back(commands_response_variables[0]);
-        }
-        if (commands_response[0] == "player_ready") {
-            clientData->isReady = true;
-        }
-        if (commands_response[0] == "player_not_ready") {
-            clientData->isReady = false;
-        }
-        if (commands_response[0] == "add_player_room") {
-            clientData->currentRoomID =  commands_response[1];
-            clientData->isInRoom = true;
-        }
-        if (commands_response[0] == "remove_player_room") {
-            clientData->currentRoomID =  "";
-            clientData->isInRoom = false;
-        }
-        if (commands_response[0] == "gameStarted") {
-            clientData->isInGame = true;
-            clientData->udpPort = commands_response[0];
+        if (data != past_data) {
+            past_data = data; // aqui commented
+            boost::split(commands_response, data, boost::is_any_of(";"));
+            if (commands_response[0] == "new_player") {
+                clientData->clientId = commands_response[1];
+            }
+            if (commands_response[0] == "room_info") {
+                clientData->currentAvailableRooms.clear();
+                for (int i = 1; i < commands_response.size(); i++)
+                    boost::split(commands_response_variables, commands_response[i], boost::is_any_of(":"));
+                    clientData->currentAvailableRooms.push_back(std::make_tuple(commands_response_variables[0], commands_response_variables[1]));
+            }
+            if (commands_response[0] == "players_info") {
+                // fix this to be boolean !!!!!!!!!!!!!!!!!!!!
+                clientData->currentRoomPlayersName.clear();
+                for (int i = 1; i < commands_response.size(); i++)
+                    boost::split(commands_response_variables, commands_response[i], boost::is_any_of(":"));
+                    clientData->currentRoomPlayersName.push_back(commands_response_variables[0]);
+            }
+            if (commands_response[0] == "player_ready") {
+                clientData->isReady = true;
+            }
+            if (commands_response[0] == "player_not_ready") {
+                clientData->isReady = false;
+            }
+            if (commands_response[0] == "add_player_room") {
+                clientData->currentRoomID =  commands_response[1];
+                clientData->isInRoom = true;
+            }
+            if (commands_response[0] == "remove_player_room") {
+                clientData->currentRoomID =  "";
+                clientData->isInRoom = false;
+            }
+            if (commands_response[0] == "gameStarted") {
+                clientData->isInGame = true;
+                clientData->udpPort = commands_response[0];
+            }
         }
     }
 }
