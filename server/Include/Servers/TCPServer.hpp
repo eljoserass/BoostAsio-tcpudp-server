@@ -1,6 +1,7 @@
 #pragma once
 #include <boost/asio.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string.hpp>
 #include "RoomManager.hpp"
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/shared_ptr.hpp>
@@ -27,15 +28,6 @@ namespace Server {
             void _sendToClients(const string &message);
             void _sendToClient(std::shared_ptr<boost::asio::ip::tcp::socket> socket, const string &message);
             void handleRead(char *data, std::shared_ptr<boost::asio::ip::tcp::socket> socket);
-            // void start_accept(void) {
-            //     tcp_connection::pointer new_connection =
-            //     tcp_connection::create(io_context_);
-
-            //     acceptor_.async_accept(new_connection->socket(),
-            //         boost::bind(&tcp_server::handle_accept, this, new_connection,
-            //         boost::asio::placeholders::error));
-            // }
-
             boost::asio::io_service &_io_service;
             tcp::acceptor _acceptor;
             
@@ -49,12 +41,75 @@ namespace Server {
             AsyncTcpServer(io_service& io_service, int port)
                 : ioService(io_service), m_acceptor(io_service, tcp::endpoint(tcp::v4(), port))
             {
+                _RoomManager = new RoomManager();
                 startAccept();
             }
-            std::shared_ptr<AsyncTcpServer> getptr() {
-                return shared_from_this();
+
+            void callFunctions(std::string command, std::string param1, std::string param2)
+            {
+                if (command == "create_room") {
+                    cout << "room created\n";
+                    _RoomManager->createRoom(param1);
+                }
+                if (command == "delete_room") {
+                    boost::uuids::string_generator gen;
+                    boost::uuids::uuid roomUuid = gen(param1);
+                    _RoomManager->deleteRoomById(roomUuid);
+                }
+                if (command == "add_player_room") {
+                    // e.g add_player_room;roomId:playerId
+                    boost::uuids::string_generator gen;
+                    boost::uuids::uuid roomUuid = gen(param1);
+                    boost::uuids::uuid playerUuid = gen(param2);
+                    _RoomManager->addPlayerToRoom(roomUuid, playerUuid);
+                }
+                if (command == "remove_player_room") {
+                    boost::uuids::string_generator gen;
+                    boost::uuids::uuid playerUuid = gen(param1);
+                    _RoomManager->removePlayerFromRoom(playerUuid);
+                }
+                if (command == "room_info") {
+                    // rooms_info;room1:uuid;room2:uuid
+                    vector<tuple<boost::uuids::uuid, string>> _roomsInfo;
+                    _roomsInfo = _RoomManager->getRoomsInfo();
+                }
+                if (command == "players_info") {
+                    vector<tuple<boost::uuids::uuid, string>> _playersInfo;
+                    boost::uuids::string_generator gen;
+                    boost::uuids::uuid roomUuid = gen(param1);
+                    _playersInfo = _RoomManager->getPlayersInfoByRoomId(roomUuid);
+                }
+                if (command == "player_ready") {
+                    boost::uuids::string_generator gen;
+                    boost::uuids::uuid playerUuid = gen(param1);
+                    _RoomManager->setPlayerReady(playerUuid);
+                }
+                if (command == "player_not_ready") {
+                    boost::uuids::string_generator gen;
+                    boost::uuids::uuid playerUuid = gen(param1);
+                    _RoomManager->setPlayerNotReady(playerUuid);
+                }
             }
-        
+
+            void handleMessage(std::string message)
+            {
+                std::string result("");
+                std::vector<std::string> tokens;
+                boost::split(tokens, message, boost::is_any_of(":;"));
+                std::string command;
+                std::string param1;
+                std::string param2;
+
+                if (tokens.size() >= 2) {
+                    command = tokens[0];
+                    param1 = tokens[1];
+                    param2 = "";
+                    if (tokens.size() == 3)
+                        param2 = tokens[2];
+                }
+                callFunctions(command, param1, param2);
+            }
+
             void startAccept() {
                 auto newConnection = std::make_shared<tcp::socket>(ioService);
                 m_acceptor.async_accept(*newConnection, [this, newConnection](boost::system::error_code error) {
@@ -75,6 +130,7 @@ namespace Server {
                         std::string message;
                         std::getline(input, message);
                         std::cout << "Received message: " << message << " from: "<<  socket->remote_endpoint() << std::endl;
+                        handleMessage(message);
                         sendMessage(socket, "server says wassup");
                         startRead(socket);
                     }
@@ -83,7 +139,6 @@ namespace Server {
                     }
                 });
             }
-
             void handleWrite(const boost::system::error_code& /*error*/, size_t /*bytes_transferred*/) {
 
             }
@@ -96,11 +151,10 @@ namespace Server {
                     boost::asio::placeholders::error,
                     boost::asio::placeholders::bytes_transferred));
             }
-
+            RoomManager *_RoomManager;
             tcp::acceptor m_acceptor;
             boost::asio::io_service &ioService;
             std::vector<std::shared_ptr<tcp::socket>> m_clients;
             io_service _ioService;
         };
-
 }

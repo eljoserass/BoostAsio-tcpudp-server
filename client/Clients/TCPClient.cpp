@@ -29,10 +29,10 @@ void listen_from_TCP_server(tcp::socket& socket ,std::shared_ptr<bool>& isTcpRun
             std::cout << "Connection closed by server" << std::endl;
         }
         std::string data = boost::asio::buffer_cast<const char *>(buff.data());
-        std::cout << "received from server:" << data << std::endl; 
         std::vector<std::string> commands_response;
         std::vector<std::string> commands_response_variables;
         if (data != past_data) {
+            std::cout << "received from server:" << data << std::endl; 
             past_data = data; // aqui commented
             boost::split(commands_response, data, boost::is_any_of(";"));
             if (commands_response[0] == "new_player") {
