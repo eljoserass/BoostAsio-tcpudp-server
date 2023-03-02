@@ -65,7 +65,7 @@ void listen_from_TCP_server(tcp::socket& socket ,std::shared_ptr<bool>& isTcpRun
                 clientData->currentRoomID =  "";
                 clientData->isInRoom = false;
             }
-            if (commands_response[0] == "gameStarted") {
+            if (commands_response[0] == "is_game_started") {
                 clientData->isInGame = true;
                 clientData->udpPort = commands_response[0];
             }
