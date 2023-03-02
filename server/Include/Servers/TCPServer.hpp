@@ -53,23 +53,28 @@ namespace Server {
 
             void callFunctions(std::string command, std::string param1, std::string param2)
             {
+                std::string result("");
+
                 if (command == "create_room") {
-                    cout << "room created\n";
+                    result = "create_room;ok";
                     _RoomManager->createRoom(param1);
                 }
                 if (command == "delete_room") {
+                    
                     boost::uuids::string_generator gen;
                     boost::uuids::uuid roomUuid = gen(param1);
                     _RoomManager->deleteRoomById(roomUuid);
                 }
                 if (command == "add_player_room") {
                     // e.g add_player_room;roomId:playerId
+                    result = "add_player_room;" + boost::lexical_cast<std::string>(param1);
                     boost::uuids::string_generator gen;
                     boost::uuids::uuid roomUuid = gen(param1);
                     boost::uuids::uuid playerUuid = gen(param2);
                     _RoomManager->addPlayerToRoom(roomUuid, playerUuid);
                 }
                 if (command == "remove_player_room") {
+                    result = "remove_player_room;ok";
                     boost::uuids::string_generator gen;
                     boost::uuids::uuid playerUuid = gen(param1);
                     _RoomManager->removePlayerFromRoom(playerUuid);
@@ -77,23 +82,42 @@ namespace Server {
                 if (command == "room_info") {
                     // rooms_info;room1:uuid;room2:uuid
                     vector<tuple<boost::uuids::uuid, string>> _roomsInfo;
+                    for (int i = 0; i < _roomsInfo.size(); i++)
+                        result += std::get<1>(_roomsInfo[i]) + ":" + boost::lexical_cast<std::string>(std::get<0>(_roomsInfo[i])) + ";";
+                    result = "room_info;" + result.substr(0, result.size() - 1); // + cantidad de players
                     _roomsInfo = _RoomManager->getRoomsInfo();
                 }
                 if (command == "players_info") {
                     vector<tuple<boost::uuids::uuid, string>> _playersInfo;
                     boost::uuids::string_generator gen;
                     boost::uuids::uuid roomUuid = gen(param1);
+                    for (int i = 0; i < _playersInfo.size(); i++)
+                        result += std::get<1>(_playersInfo[i]) + ":" + boost::lexical_cast<std::string>(std::get<0>(_playersInfo[i])) + ";";
+                    result = "players_info;" + result.substr(0, result.size() - 1);
                     _playersInfo = _RoomManager->getPlayersInfoByRoomId(roomUuid);
                 }
                 if (command == "player_ready") {
+                    result = "player_ready;" + boost::lexical_cast<std::string>(param1) + ":ok";
                     boost::uuids::string_generator gen;
                     boost::uuids::uuid playerUuid = gen(param1);
                     _RoomManager->setPlayerReady(playerUuid);
                 }
                 if (command == "player_not_ready") {
+                    result = "player_not_ready;" + boost::lexical_cast<std::string>(param1) + ":ok";
                     boost::uuids::string_generator gen;
                     boost::uuids::uuid playerUuid = gen(param1);
                     _RoomManager->setPlayerNotReady(playerUuid);
+                }
+                if (command == "is_room_ready") {
+                    bool roomIsReady;
+                    boost::uuids::string_generator gen;
+                    boost::uuids::uuid roomUuid = gen(param1);
+                    roomIsReady = _RoomManager->isRoomReadyByRoomId(roomUuid);
+                    if (roomIsReady == true) {
+                        int port = _RoomManager->_GameManager->startGame("room"); // cambiar esto
+                        result = "is_room_ready;" + boost::lexical_cast<std::string>(param1) + ":" + boost::lexical_cast<std::string>(port);
+                    } else
+                        result = "is_room_ready;" + boost::lexical_cast<std::string>(param1) + ":false";
                 }
             }
 
