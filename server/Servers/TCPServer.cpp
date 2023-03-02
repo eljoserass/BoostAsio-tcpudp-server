@@ -159,7 +159,7 @@ void TCPServer::handleRead(char *data, std::shared_ptr<boost::asio::ip::tcp::soc
             for (int i = 0; i < _roomsInfo.size(); i++) {
                 result += std::get<1>(_roomsInfo[i]) + ":" + boost::lexical_cast<std::string>(std::get<0>(_roomsInfo[i])) + ";";
             }
-            result = "room_info;" + result.substr(0, result.size() - 1);
+            result = "room_info;" + result.substr(0, result.size() - 1); // + cantidad de players
             _roomsInfo = _RoomManager->getRoomsInfo();
         }
         if (strcmp(command, "players_info") == 0) {
