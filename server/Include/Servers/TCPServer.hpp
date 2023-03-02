@@ -36,7 +36,7 @@ namespace Server {
             std::thread read_thread;
     };
 
-    class AsyncTcpServer : public std::enable_shared_from_this<AsyncTcpServer> {
+    class AsyncTcpServer {
         public:
             AsyncTcpServer(io_service& io_service, int port)
                 : ioService(io_service), m_acceptor(io_service, tcp::endpoint(tcp::v4(), port))
@@ -44,13 +44,24 @@ namespace Server {
                 _RoomManager = new RoomManager();
                 startAccept();
             }
+            
+            void sendMessage(std::shared_ptr<tcp::socket> socket, std::string message) {
+                // boost::asio::async_write(client, boost::asio::buffer(message),
+                // boost::bind(&AsyncTcpServer::handleWrite, shared_from_this()));
+                std::cout << "message to send " <<  message << std::endl;
+                boost::asio::async_write(*socket, boost::asio::buffer(message),
+                    boost::bind(&AsyncTcpServer::handleWrite, this,
+                    boost::asio::placeholders::error,
+                    boost::asio::placeholders::bytes_transferred));
+            }
 
-            void callFunctions(std::string command, std::string param1, std::string param2)
+            std::string callFunctions(std::string command, std::string param1, std::string param2)
             {
                 std::string result("");
 
                 if (command == "create_room") {
                     result = "create_room;ok";
+                    std::cout << "enter in create room" << std::endl;
                     _RoomManager->createRoom(param1);
                 }
                 if (command == "delete_room") {
@@ -79,6 +90,7 @@ namespace Server {
                     for (int i = 0; i < _roomsInfo.size(); i++)
                         result += std::get<1>(_roomsInfo[i]) + ":" + boost::lexical_cast<std::string>(std::get<0>(_roomsInfo[i])) + ";";
                     result = "room_info;" + result.substr(0, result.size() - 1); // + cantidad de players
+                    std::cout << "enter in create room" << std::endl;
                     _roomsInfo = _RoomManager->getRoomsInfo();
                 }
                 if (command == "players_info") {
@@ -113,13 +125,15 @@ namespace Server {
                     } else
                         result = "is_room_ready;" + boost::lexical_cast<std::string>(param1) + ":false";
                 }
+                return result;
             }
 
-            void handleMessage(std::string message)
+            std::string handleMessage(std::string message)
             {
-                std::string result("");
+                // new_player;player|create_room;romom|add_player;uuuidroom:uuidPlayer
+                // [new_player;player][create_room;romom][add_player;uuuidroom:uuidPlayer]
                 std::vector<std::string> tokens;
-                boost::split(tokens, message, boost::is_any_of(":;"));
+                boost::split(tokens, message, boost::is_any_of("|:;"));
                 std::string command;
                 std::string param1;
                 std::string param2;
@@ -131,7 +145,7 @@ namespace Server {
                     if (tokens.size() == 3)
                         param2 = tokens[2];
                 }
-                callFunctions(command, param1, param2);
+                return callFunctions(command, param1, param2);
             }
 
             void startAccept() {
@@ -154,8 +168,7 @@ namespace Server {
                         std::string message;
                         std::getline(input, message);
                         std::cout << "Received message: " << message << " from: "<<  socket->remote_endpoint() << std::endl;
-                        handleMessage(message);
-                        sendMessage(socket, "server says wassup");
+                        sendMessage(socket, handleMessage(message));
                         startRead(socket);
                     }
                     else {
@@ -167,14 +180,6 @@ namespace Server {
 
             }
 
-            void sendMessage(std::shared_ptr<tcp::socket> socket, std::string message) {
-                // boost::asio::async_write(client, boost::asio::buffer(message),
-                // boost::bind(&AsyncTcpServer::handleWrite, shared_from_this()));
-                boost::asio::async_write(*socket, boost::asio::buffer(message),
-                    boost::bind(&AsyncTcpServer::handleWrite, this,
-                    boost::asio::placeholders::error,
-                    boost::asio::placeholders::bytes_transferred));
-            }
             RoomManager *_RoomManager;
             tcp::acceptor m_acceptor;
             boost::asio::io_service &ioService;
