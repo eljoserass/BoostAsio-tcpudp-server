@@ -2,6 +2,9 @@
 #include <boost/asio.hpp>
 #include <boost/lexical_cast.hpp>
 #include "RoomManager.hpp"
+#include <boost/enable_shared_from_this.hpp>
+#include <boost/shared_ptr.hpp>
+#include <cassert>
 
 using namespace boost::asio;
 using ip::tcp;
@@ -41,21 +44,23 @@ namespace Server {
             std::thread read_thread;
     };
 
-    class AsyncTcpServer {
+    class AsyncTcpServer : public std::enable_shared_from_this<AsyncTcpServer> {
         public:
             AsyncTcpServer(io_service& io_service, int port)
                 : ioService(io_service), m_acceptor(io_service, tcp::endpoint(tcp::v4(), port))
             {
                 startAccept();
             }
-        boost::asio::io_service &ioService;
-        private:
+            std::shared_ptr<AsyncTcpServer> getptr() {
+                return shared_from_this();
+            }
+        
             void startAccept() {
                 auto newConnection = std::make_shared<tcp::socket>(ioService);
                 m_acceptor.async_accept(*newConnection, [this, newConnection](boost::system::error_code error) {
                     if (!error) {
                         std::cout << "Accepted connection from: " << newConnection->remote_endpoint() << std::endl;
-                        m_clients.insert(newConnection->remote_endpoint());
+                        m_clients.push_back(newConnection);
                         startRead(newConnection);
                     }
                     startAccept();
@@ -69,7 +74,8 @@ namespace Server {
                         std::istream input(buffer.get());
                         std::string message;
                         std::getline(input, message);
-                        std::cout << "Received message: " << message << std::endl;
+                        std::cout << "Received message: " << message << " from: "<<  socket->remote_endpoint() << std::endl;
+                        sendMessage(socket, "server says wassup");
                         startRead(socket);
                     }
                     else {
@@ -78,8 +84,22 @@ namespace Server {
                 });
             }
 
+            void handleWrite(const boost::system::error_code& /*error*/, size_t /*bytes_transferred*/) {
+
+            }
+
+            void sendMessage(std::shared_ptr<tcp::socket> socket, std::string message) {
+                // boost::asio::async_write(client, boost::asio::buffer(message),
+                // boost::bind(&AsyncTcpServer::handleWrite, shared_from_this()));
+                boost::asio::async_write(*socket, boost::asio::buffer(message),
+                    boost::bind(&AsyncTcpServer::handleWrite, this,
+                    boost::asio::placeholders::error,
+                    boost::asio::placeholders::bytes_transferred));
+            }
+
             tcp::acceptor m_acceptor;
-            std::set<tcp::endpoint> m_clients;
+            boost::asio::io_service &ioService;
+            std::vector<std::shared_ptr<tcp::socket>> m_clients;
             io_service _ioService;
         };
 

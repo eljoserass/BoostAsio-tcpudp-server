@@ -80,7 +80,7 @@ class ClientServer {
                 if (val)
                     tcpClient_->_send("player_ready;" + clientData->clientId  + "|");
                 else
-                    tcpClient_->_send("player_not_ready" + clientData->clientId  + "|");
+                    tcpClient_->_send("player_not_ready;" + clientData->clientId  + "|");
                 return 0;
             }
             return 1;
