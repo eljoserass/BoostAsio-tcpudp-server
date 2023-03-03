@@ -8,19 +8,6 @@
 using boost::asio::ip::udp;
 using boost::asio::ip::tcp;
 
-void run_receive_thread(udp::socket& socket, udp::endpoint& sender_endpoint, std::shared_ptr<std::string>& response) {
-    while (true) {
-        boost::array<char, 1028> recv_buf;
-        
-        size_t len = socket.receive_from(boost::asio::buffer(recv_buf), sender_endpoint);
-        *response = std::string(recv_buf.data(), len);
-
-        /// REMOVE WHEN NOT USING CLI!
-        std::cout.write(recv_buf.data(), len);
-        std::cout.write("\n", 1);
-    }
-}
-
 namespace ClientController {
 
     class UDPClient {
