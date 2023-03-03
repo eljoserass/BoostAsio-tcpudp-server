@@ -57,7 +57,6 @@ void ClientServer::speak_to_UDPserver(udp::socket& socket, udp::endpoint& receiv
 {
     socket.send_to(boost::asio::buffer(" message from client outside loop"), receiver_endpoint);
     while (true) {
-        sleep(1);
         socket.send_to(boost::asio::buffer(" message from client in loop"), receiver_endpoint);
     }
 }

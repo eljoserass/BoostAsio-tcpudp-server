@@ -35,7 +35,7 @@ int getAvailablePort() {
     return port;
 }
 
-int GameManager::startGame(std::string room, int optPort, boost::asio::io_context &io_context)
+int GameManager::startGame(std::string room, int optPort, boost::asio::io_context &io_context, AbstractECS *ecs)
 {
     
     int port = -1;
@@ -43,9 +43,8 @@ int GameManager::startGame(std::string room, int optPort, boost::asio::io_contex
     if (optPort != -1)
         port = optPort;
     if (games_.count(room.c_str()) == 0) {
-  
         std::cout << "game started in port " << port << std::endl;
-        games_[room.c_str()] = new Game(port, io_context);
+        games_[room.c_str()] = new Game(port, io_context, ecs);
         Game *tempgame = games_[room.c_str()];
         gamesTread.push_back(std::thread(run_game_thread, std::ref(*tempgame)));
     }

@@ -18,11 +18,10 @@ void UDPServer::send_to_all(const std::string &message)
                 socket_.send_to(boost::asio::buffer(message), endpoint);
             }
         }
-    }
+    }  
 }
 
 void UDPServer::start_receive() {
-    std::cout << "start_recieve" << std::endl;
     socket_.async_receive_from(
         boost::asio::buffer(recv_buffer_), remote_endpoint_,
         boost::bind(&UDPServer::handle_receive, this,
@@ -31,7 +30,6 @@ void UDPServer::start_receive() {
 }
 
 void UDPServer::handle_receive(const boost::system::error_code& error, std::size_t received) {
-    std::cout << "handle_receive" << std::endl;
     if (!error) {
         if (clients_.count(remote_endpoint_) == 0) {
             clients_[remote_endpoint_] = false;
@@ -47,11 +45,9 @@ void UDPServer::handle_receive(const boost::system::error_code& error, std::size
         if (*clientMessage_ == "ready") {
             if (it != clients_.end())
                 it->second = true;
-            // update to be true
         } else if (*clientMessage_ == "notready"){
             if (it != clients_.end())
                 it->second = false;
-            // update to be false
         }
         update_gane_ready();
         socket_.async_send_to(boost::asio::buffer(*message), remote_endpoint_,
