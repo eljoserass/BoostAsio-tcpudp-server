@@ -84,32 +84,15 @@ class AvailableRooms {
 
 class NewClientServer {
     public:
-        NewClientServer() {
-            available_rooms.push_back(new AvailableRooms("localhost", "1234", "room1", "easy", "4"));
-            available_rooms.push_back(new AvailableRooms("localhost", "6969", "room2", "easy", "4"));
-        }
+        NewClientServer();
 
-        void startGame(int pos) {
-            udpClient = new NewUDPClient(available_rooms[0]->ip, available_rooms[0]->port);
-        }
+        void startGame(int pos);
 
-        void listen(void) {
-            udpClient->receive();
-        }
+        void listen(void) ;
 
-        void parse_from_cli(void) {
-            while (true) {
-                std::string message;
-                std::cout << "\nEnter command: ";
-                std::getline(std::cin, message);
-
-                udpClient->sendCommand(message);
-            }
-        }
-
-        void join(void) {
-            udpClient->join();
-        }
+        void parse_from_cli(void) ;
+        
+        void join(void);
         NewUDPClient *udpClient;
         std::vector<AvailableRooms*> available_rooms;
 };
