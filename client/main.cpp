@@ -16,9 +16,12 @@ int main(int argc, char **argv) {
         // start the connection
         clientServer->run();
 
-        clientServer->setPlayerName("name");
+
+
+        clientServer->setPlayerName("name" + std::to_string(rand() %10000));
+        
         // create a room
-        clientServer->createRoom("rowwwom");
+        clientServer->createRoom("rowwwom" + std::to_string(rand() %10000));
 
         // // read avaialbe rooms to join
         // std::vector<std::tuple<std::string, std::string>> rooms = clientServer->clientData->currentAvailableRooms;

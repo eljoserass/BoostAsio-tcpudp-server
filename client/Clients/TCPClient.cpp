@@ -20,36 +20,44 @@ void listen_from_TCP_server(tcp::socket& socket ,std::shared_ptr<bool>& isTcpRun
     boost::asio::streambuf buff;
     boost::system::error_code error;
     std::string data;
-    std::string past_data;
+    std::string past_data("none");
     while (*isTcpRunnig) {
-
-        boost::asio::read_until(socket, buff, "\0", error);
+        boost::array<char, 1024> buf;
+        // boost::asio::read_until(socket, buff, '\0', error);
+        size_t len = socket.read_some(boost::asio::buffer(buf), error);
         if (error == boost::asio::error::eof) {
             *isTcpRunnig = false;
             std::cout << "Connection closed by server" << std::endl;
         }
-        std::string data = boost::asio::buffer_cast<const char *>(buff.data());
+        // std::string data = boost::asio::buffer_cast<const char *>(buff.data());
+        std::string data(buf.begin(), len);
         std::vector<std::string> commands_response;
         std::vector<std::string> commands_response_variables;
-        if (data != past_data) {
-            std::cout << "received from server:" << data << std::endl; 
-            past_data = data; // aqui commented
+        // std::cout << "data  " << data << std::endl;
+        // std::cout << "past data " << past_data << std::endl;
+        // if (data != past_data) {
+            std::cout << "received from server:" << data << "sizet "<< len << "vs size() "<< data.size() << std::endl; 
+            // past_data = data; // aqui commented
             boost::split(commands_response, data, boost::is_any_of(";"));
+            std::cout << "hola?" << std::endl;
+
             if (commands_response[0] == "new_player") {
                 clientData->clientId = commands_response[1];
             }
             if (commands_response[0] == "room_info") {
                 clientData->currentAvailableRooms.clear();
-                for (int i = 1; i < commands_response.size(); i++)
+                for (int i = 1; i < commands_response.size() - 1; i++) {
                     boost::split(commands_response_variables, commands_response[i], boost::is_any_of(":"));
                     clientData->currentAvailableRooms.push_back(std::make_tuple(commands_response_variables[0], commands_response_variables[1]));
+                }
             }
             if (commands_response[0] == "players_info") {
                 // fix this to be boolean !!!!!!!!!!!!!!!!!!!!
                 clientData->currentRoomPlayersName.clear();
-                for (int i = 1; i < commands_response.size(); i++)
+                for (int i = 1; i < commands_response.size(); i++) {
                     boost::split(commands_response_variables, commands_response[i], boost::is_any_of(":"));
                     clientData->currentRoomPlayersName.push_back(commands_response_variables[0]);
+                }
             }
             if (commands_response[0] == "player_ready") {
                 clientData->isReady = true;
@@ -65,11 +73,15 @@ void listen_from_TCP_server(tcp::socket& socket ,std::shared_ptr<bool>& isTcpRun
                 clientData->currentRoomID =  "";
                 clientData->isInRoom = false;
             }
-            if (commands_response[0] == "is_game_started") {
-                clientData->isInGame = true;
-                clientData->udpPort = commands_response[0];
+            if (commands_response[0] == "is_room_ready") {
+                if (commands_response[1] != "false") {
+                    clientData->isInGame = true;
+                    clientData->udpPort = commands_response[1];
+                }
+                // boost::split(commands_response_variables, commands_response[1], boost::is_any_of(":"));
+                
             }
-        }
+        // }
     }
 }
 

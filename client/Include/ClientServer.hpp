@@ -54,6 +54,7 @@ class ClientServer {
 
         int fetchRooms() {
             tcpClient_->_send("room_info|");
+            std::cout << "fetch rooms" << std::endl;
             return (0);
         }
         int createRoom(std::string room) {
@@ -89,6 +90,11 @@ class ClientServer {
         int setPlayerName(std::string name) {
             tcpClient_->_send("new_player;" + name + "|");
             clientData->clientName = name;
+            return (0);
+        }
+
+        int isCurrentRoomReady(void) {
+            tcpClient_->_send("is_room_ready;" + clientData->currentRoomID + "|");
             return (0);
         }
 
