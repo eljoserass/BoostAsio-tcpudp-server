@@ -5,10 +5,6 @@ CC			=	g++
 RM			=	rm -f
 
 SRCS		=	./main.cpp					\
-				./Clients/TCPClient.cpp		\
-				./Clients/UDPClient.cpp		\
-				./Data/ClientData.cpp		\
-				./Server/ClientServer.cpp	\
 
 OBJS		=	$(SRCS:.cpp=.o)
 

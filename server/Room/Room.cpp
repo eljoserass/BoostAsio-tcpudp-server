@@ -1,4 +1,5 @@
 #include "../Include/Room/Room.hpp"
+using namespace Server;
 
 Room::Room(const string roomName)
 {

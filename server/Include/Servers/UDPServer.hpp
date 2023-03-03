@@ -14,26 +14,36 @@
 
 using boost::asio::ip::udp;
 
-class UDPServer {
-    public:
-        UDPServer(int port);
-        void send_to_all(const std::string &message);
-        void run(void);
-        // void remove_players();
+namespace Server {
+    class UDPServer {
+        public:
+            UDPServer(int port, boost::asio::io_context &io_context);
+            void send_to_all(const std::string &message);
+            std::shared_ptr<std::string> clientMessage_;
+            std::shared_ptr<bool> isGameReady;
+        private:
+            udp::socket socket_;
+            udp::endpoint remote_endpoint_;
+            boost::array<char, 1024> recv_buffer_;
+            std::map<udp::endpoint, bool> clients_;
+            
+            std::mutex mtx;
+            
 
-        std::shared_ptr<std::string> clientMessage_;
-        boost::asio::io_context io_context;
-    private:
-        udp::socket socket_;
-        udp::endpoint remote_endpoint_;
-        boost::array<char, 1024> recv_buffer_;
-        std::map<udp::endpoint, bool> clients_;
-        std::mutex mtx;
-    
-        void start_receive();
-        void handle_receive(const boost::system::error_code& error, std::size_t received);
-
-        void handle_send(boost::shared_ptr<std::string> message,
-                        const boost::system::error_code& error,
-                        std::size_t bytes) {};
-};
+            void start_receive();
+            void handle_receive(const boost::system::error_code& error, std::size_t received);
+            void update_gane_ready() {
+                int count_ready = 0;
+                for (auto& client: clients_) {
+                    if (client.second)
+                        count_ready++;
+                }
+                if (count_ready >= clients_.size()) {
+                    *isGameReady = true;
+                }
+            }
+            void handle_send(boost::shared_ptr<std::string> message,
+                            const boost::system::error_code& error,
+                            std::size_t bytes) {/* here measure data sent (maybe a .log?)*/};
+    };
+}

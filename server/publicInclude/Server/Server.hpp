@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Game/Game.hpp"
-#include "Game/GameManager.hpp"
-#include "Player/Player.hpp"
-#include "Room/Room.hpp"
-#include "Room/RoomManager.hpp"
-#include "Servers/TCPServer.hpp"
-#include "Servers/UDPServer.hpp"
+#include "../../Include/Game/Game.hpp"
+#include "../../Include/Game/GameManager.hpp"
+#include "../../Include/Player/Player.hpp"
+#include "../../Include/Room/Room.hpp"
+#include "../../Include/Room/RoomManager.hpp"
+#include "../../Include/Servers/TCPServer.hpp"
+#include "../../Include/Servers/UDPServer.hpp"
