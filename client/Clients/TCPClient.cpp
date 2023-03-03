@@ -36,10 +36,10 @@ void listen_from_TCP_server(tcp::socket& socket ,std::shared_ptr<bool>& isTcpRun
         // std::cout << "data  " << data << std::endl;
         // std::cout << "past data " << past_data << std::endl;
         // if (data != past_data) {
-            std::cout << "received from server:" << data << "sizet "<< len << "vs size() "<< data.size() << std::endl; 
+            std::cout << "received from server:" << data << " size_t "<< len << " vs size() "<< data.size() << std::endl; 
             // past_data = data; // aqui commented
             boost::split(commands_response, data, boost::is_any_of(";"));
-            std::cout << "hola?" << std::endl;
+            // std::cout << "hola?" << std::endl;
 
             if (commands_response[0] == "new_player") {
                 clientData->clientId = commands_response[1];

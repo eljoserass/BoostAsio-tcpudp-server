@@ -43,11 +43,11 @@ void RoomManager::startGame()
     }
 }
 
-boost::uuids::uuid RoomManager::addPlayer(std::shared_ptr<boost::asio::ip::tcp::socket> socket, const string playerName)
+boost::uuids::uuid RoomManager::addPlayer(string &playerName)
 {
    
     // Player *playerptr = new Player(socket, playerName);
-    Player *player = new Player(socket, playerName);
+    Player *player = new Player(playerName);
     _players.push_back(*player);
     std::cout << "addPlayer" << std::endl;
     return _players.back().getPlayerId();

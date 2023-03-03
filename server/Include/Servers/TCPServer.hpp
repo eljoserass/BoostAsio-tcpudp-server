@@ -46,8 +46,6 @@ namespace Server {
             }
             
             void sendMessage(std::shared_ptr<tcp::socket> socket, std::string message) {
-                // boost::asio::async_write(client, boost::asio::buffer(message),
-                // boost::bind(&AsyncTcpServer::handleWrite, shared_from_this()));
                 std::cout << "message to send " <<  message << std::endl;
                 boost::asio::async_write(*socket, boost::asio::buffer(message),
                     boost::bind(&AsyncTcpServer::handleWrite, this,
@@ -77,18 +75,12 @@ namespace Server {
                         command = commands[0];
                     }
                     if (command == "new_player") {
-                        result = "new_player;id";
-                        // std::cout << "enter in new player" << std::endl;
-                        // _RoomManager->addPlayer(); change to new players
+                        result = "new_player;" + boost::lexical_cast<std::string>(_RoomManager->addPlayer(param1));
+                        
                     }
                     if (command == "create_room") {
                         result = "create_room;ok";
-                        // std::cout << "enter in create room" << std::endl;
                         _RoomManager->createRoom(param1);
-                        // std::cout << "after room manager" << std::endl;
-                        // for (auto& room: _RoomManager->getRoomsInfo()) {
-                        //     std::cout << "room name: " << get<0>(room) << " uuid: " << get<1>(room);
-                        // }
                     }
                     if (command == "delete_room") {
                         
@@ -111,24 +103,16 @@ namespace Server {
                         _RoomManager->removePlayerFromRoom(playerUuid);
                     }
                     if (command == "room_info") {
-                        // rooms_info;room1:uuid;room2:uuid
-                        // std::cout << "enter in roomInfo" << std::endl;
-                        // vector<tuple<boost::uuids::uuid, string>> _roomsInfo;
                         result = "room_info;";
                         for (int i = 0; i < _RoomManager->getRoomsInfo().size(); i++)
-                            result += std::get<1>(_RoomManager->getRoomsInfo()[i]) + ":" + boost::lexical_cast<std::string>(std::get<0>(_RoomManager->getRoomsInfo()[i])) + ";";
-                        // result = "room_info;" + result.substr(0, result.size() - 1); // + cantidad de players
-                        // _roomsInfo = _RoomManager->getRoomsInfo();
+                            result += std::get<1>(_RoomManager->getRoomsInfo()[i]) + ":" + boost::lexical_cast<std::string>(std::get<0>(_RoomManager->getRoomsInfo()[i])) + ";"; // number of players
                     }
                     if (command == "players_info") {
-                        // vector<tuple<boost::uuids::uuid, string>> _playersInfo;
                         boost::uuids::string_generator gen;
                         boost::uuids::uuid roomUuid = gen(param1);
                         result = "players_info;";
                         for (int i = 0; i < _RoomManager->getPlayersInfoByRoomId(roomUuid).size(); i++)
                             result += std::get<1>(_RoomManager->getPlayersInfoByRoomId(roomUuid)[i]) + ":" + boost::lexical_cast<std::string>(std::get<0>(_RoomManager->getPlayersInfoByRoomId(roomUuid)[i])) + ";";
-                        // result = "players_info;" + result.substr(0, result.size() - 1);
-                        // _playersInfo = _RoomManager->getPlayersInfoByRoomId(roomUuid);
                     }
                     if (command == "player_ready") {
                         result = "player_ready;" + boost::lexical_cast<std::string>(param1) + ":ok";

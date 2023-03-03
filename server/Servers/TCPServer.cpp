@@ -111,10 +111,10 @@ void TCPServer::handleRead(char *data, std::shared_ptr<boost::asio::ip::tcp::soc
 
         if (strcmp(command, "new_player") == 0) {
             
-            boost::uuids::uuid playerId = _RoomManager->addPlayer(socket, param);
-            std::cout << "hola1" << std::endl;
-            std::string playerIdStr = boost::uuids::to_string(playerId);
-            result = "new_player;" + playerIdStr;
+            // boost::uuids::uuid playerId = _RoomManager->addPlayer(string(param));
+            // std::cout << "hola1" << std::endl;
+            // std::string playerIdStr = boost::uuids::to_string(playerId);
+            // result = "new_player;" + playerIdStr;
         }
         if (strcmp(command, "create_room") == 0) {
             result = "create_room;ok";
