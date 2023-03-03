@@ -152,9 +152,10 @@ vector<tuple<boost::uuids::uuid, string>> RoomManager::getRoomsInfo(void)
 
 vector<tuple<boost::uuids::uuid, string>> RoomManager::getPlayersInfoByRoomId(boost::uuids::uuid roomId)
 {
+    vector<tuple<boost::uuids::uuid, string>> players_info;
     for (auto &player: _players) {
         if (player.currentRoomId == roomId)
             _playerInfo.push_back(player.getPlayerInfo());
     }
-    return _playerInfo;
+    return players_info;
 }

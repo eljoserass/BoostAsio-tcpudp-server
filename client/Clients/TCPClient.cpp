@@ -36,7 +36,7 @@ void listen_from_TCP_server(tcp::socket& socket ,std::shared_ptr<bool>& isTcpRun
         // std::cout << "data  " << data << std::endl;
         // std::cout << "past data " << past_data << std::endl;
         // if (data != past_data) {
-            std::cout << "received from server:" << data << " size_t "<< len << " vs size() "<< data.size() << std::endl; 
+            std::cout << "received from server:" << data << " size_t "<< len << std::endl; 
             // past_data = data; // aqui commented
             boost::split(commands_response, data, boost::is_any_of(";"));
             // std::cout << "hola?" << std::endl;
@@ -57,6 +57,7 @@ void listen_from_TCP_server(tcp::socket& socket ,std::shared_ptr<bool>& isTcpRun
                 for (int i = 1; i < commands_response.size(); i++) {
                     boost::split(commands_response_variables, commands_response[i], boost::is_any_of(":"));
                     clientData->currentRoomPlayersName.push_back(commands_response_variables[0]);
+                    clientData->currentRoomPlayers.push_back(std::make_tuple(commands_response_variables[0], (commands_response_variables[1] == "ready" ? true: false)));
                 }
             }
             if (commands_response[0] == "player_ready") {

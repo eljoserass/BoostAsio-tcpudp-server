@@ -28,8 +28,8 @@ void ClientServer::joinThread(void)
 {
     std::cout << "joinThread" << std::endl;
     // puede que pete aqui
-    tcpClient_->joinThread();
-    // udpClient_->joinThread();
+    // tcpClient_->joinThread();
+    udpClient_->joinThread();
 }
 
 void ClientServer::run()
@@ -38,10 +38,10 @@ void ClientServer::run()
     // parseTCPResponse();
 }
 
-void ClientServer::setUdpPort(const char *udpPort)
-{
-    udpPort_ = udpPort;
-}
+ void ClientServer::setUdpPort(const char *udpPort)
+ {
+     udpPort_ = udpPort;
+ }
 
 void ClientServer::setTcpPort(const char *tcpPort)
 {

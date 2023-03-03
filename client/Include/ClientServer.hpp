@@ -29,6 +29,9 @@ class ClientServer {
             }
             return ("none");
         }
+        void sendUdpCommand(std::string command) {
+            udpClient_->sendCommand(command);
+        }
         std::shared_ptr<std::string> gameState;
         bool isInGame;
         std::shared_ptr<bool> isUDPRunning_; // use this to pass it as a parameter to the udp loop in order to stop it accordingly
@@ -65,8 +68,14 @@ class ClientServer {
         }
         int enterRoom(std::string roomName) {
             // clientData->currentRoomName = roomName;
+            if (findRoomUuidByName(roomName) == "none") 
+                return -1;
+            if (clientData->isInRoom)
+                return -1;
             tcpClient_->_send("add_player_room;" + findRoomUuidByName(roomName) + ":" + clientData->clientId  + "|");
             clientData->currentRoomName = roomName;
+            clientData->currentRoomID = findRoomUuidByName(roomName);
+            clientData->isInRoom = true;
             return (0);
         }
         int leaveRoom() {
@@ -98,6 +107,11 @@ class ClientServer {
             return (0);
         }
 
+        int deleteRoomByName(std::string roomName) {
+            if (findRoomUuidByName(roomName) != "none")
+                tcpClient_->_send("delete_room;" + findRoomUuidByName(roomName) + "|");
+            return (0);
+        }
         /*
         agregar resto de metodos para interacturar con los rooms, atributos para guardar rooms, variables para saber en que estado se está
         */

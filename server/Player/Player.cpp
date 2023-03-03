@@ -1,7 +1,7 @@
 #include "../Include/Player/Player.hpp"
 using namespace Server;
 
-Player::Player(string &playerName)
+Player::Player(string&playerName)
 {
     setPlayerName(playerName);
     setPlayerId(playerName);

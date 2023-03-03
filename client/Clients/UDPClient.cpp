@@ -10,7 +10,7 @@ UDPClient::UDPClient(std::string host, std::string port, std::shared_ptr<std::st
 
 void listen_from_UDPserver(udp::socket& socket, std::shared_ptr<std::string>& gameState, std::shared_ptr<bool> &running)
 {
-    boost::array<char, 128> recv_buf;
+    boost::array<char, 1028> recv_buf;
     udp::endpoint sender_endpoint;
     while (*running) {
         size_t len = socket.receive_from(

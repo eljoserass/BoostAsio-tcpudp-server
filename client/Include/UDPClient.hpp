@@ -15,6 +15,9 @@ class UDPClient {
         UDPClient(std::string host, std::string port, std::shared_ptr<std::string>& gameState);
         void run(std::shared_ptr<std::string>& gameState, std::shared_ptr<bool> running);
         void joinThread();
+        void sendCommand(std::string command) {
+            socket_.send_to(boost::asio::buffer(command.c_str(), command.length()), receiver_endpoint_);
+        }
 
     private:
         boost::asio::io_context io_context_;
