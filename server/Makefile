@@ -24,7 +24,7 @@ LDFLAGS += -L/usr/local/lib -lboost_system -lpthread
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	 $(CC) $(OBJS) $(LDFLAGS) -o $(NAME)
+	 $(CC) $(OBJS) $(LDFLAGS) -g -o $(NAME)
 
 clean:
 	$(RM) $(OBJS)

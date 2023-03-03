@@ -1,69 +1,117 @@
 #pragma once
 
-#include "./TCPClient.hpp"
-#include "./UDPClient.hpp"
+#include <iostream>
+#include <boost/array.hpp>
+#include <boost/asio.hpp>
+#include <boost/algorithm/string.hpp>
 
+using boost::asio::ip::udp;
+using boost::asio::ip::tcp;
+
+
+void run_receive_thread(udp::socket& socket, udp::endpoint& sender_endpoint, std::shared_ptr<std::string>& response) {
+    while (true) {
+        boost::array<char, 1028> recv_buf;
+        
+        size_t len = socket.receive_from(boost::asio::buffer(recv_buf), sender_endpoint);
+        *response = std::string(recv_buf.data(), len);
+
+        /// REMOVE WHEN NOT USING CLI!
+        std::cout.write(recv_buf.data(), len);
+        std::cout.write("\n", 1);
+    }
+}
 
 namespace ClientController {
 
-class ClientServer {
-
+class NewUDPClient {
     public:
-        ClientServer();
-        ~ClientServer() {};
-        void startUdp(std::string port);
-        void startTcp();
-        void joinThread(void);
-        void run();
-        void setUdpPort(const char *udpPort);
-        void setTcpPort(const char *tcpPort);
-        void setHost(const char *host);
-        void speak_to_UDPserver(udp::socket& socket, udp::endpoint& receiver_endpoint, std::string &message);
+        NewUDPClient(std::string ip, std::string port) : 
+            io_service(), 
+            socket(io_service, udp::endpoint(udp::v4(), 0)), 
+            resolver(io_service),
+            query(udp::v4(), ip, port),
+            sender_endpoint()
+        {
+            response = std::make_shared<std::string>(std::string("null"));
+           receiver_endpoint =  *resolver.resolve(query);
+           sendCommand("clientConnect");
+        }
 
-        std::shared_ptr<std::string> gameState;
-        bool isInGame;
-        std::shared_ptr<bool> isUDPRunning_; // use this to pass it as a parameter to the udp loop in order to stop it accordingly
-        std::shared_ptr<bool> isTCPRunning_;
-        std::thread parse_response_thread;
-        TCPClient *tcpClient_;
-        std::string udpPort_;
-        std::string host_;
-        std::string uuid;
-        std::string current_room_uuid;
-        std::shared_ptr<ClientData> clientData;
-        int createRoom(std::string room) {
-            // tcpClient_->_send("create_room;room1");
-            clientData->currentAvailableRooms.push_back(room);
-            return (0);
-        }
-        int enterRoom(std::string roomName) {
-            clientData->currentRoomName = roomName;
-            return (0);
-        }
-        int leaveRoom() {
-            clientData->currentRoomName = "";
-            setReady(false);
-            return (0);
-        }
-        int setReady(bool val) {
-            if (!clientData->isInRoom) {
-                clientData->isReady = val;
-                return 0;
+        int sendCommand(std::string command) {
+            boost::system::error_code error;
+            socket.send_to(boost::asio::buffer(command), receiver_endpoint, 0, error);
+            if (error && error != boost::asio::error::message_size) {
+                 std::cerr << "Error sending message: " << error.message() << std::endl;
+                return (84);
             }
-            return 1;
-        }
-
-        int setPlayerName(std::string name) {
-            clientData->clientName = name;
             return (0);
         }
 
-        /*
-        agregar resto de metodos para interacturar con los rooms, atributos para guardar rooms, variables para saber en que estado se está
-        */
-    private:
-        UDPClient *udpClient_;
-        std::string tcpPort_;
+        void receive() {
+            receiver_thread = std::thread(run_receive_thread, std::ref(socket), std::ref(sender_endpoint), std::ref(response));
+        }
+
+        void join() {
+            receiver_thread.join();
+        }
+
+
+        boost::asio::io_service io_service;
+        udp::socket socket;
+        udp::resolver resolver;
+        udp::resolver::query query;
+        udp::endpoint receiver_endpoint;
+        udp::endpoint sender_endpoint;
+        std::thread receiver_thread;
+        std::shared_ptr<std::string> response;
+
+};
+
+class AvailableRooms {
+    public:
+
+        AvailableRooms(const char* ipParam, const char* portParam, const char* nameParam, const char* difficultyParam, const char *maxPlayersParam) : 
+        ip(ipParam), port(portParam), name(nameParam), difficulty(difficultyParam), max_players(maxPlayersParam) {
+        }
+
+        std::string ip;
+        std::string port;
+        std::string name;
+        std::string difficulty;
+        std::string max_players;
+};
+
+class NewClientServer {
+    public:
+        NewClientServer() {
+            available_rooms.push_back(new AvailableRooms("localhost", "1234", "room1", "easy", "4"));
+            available_rooms.push_back(new AvailableRooms("localhost", "6969", "room2", "easy", "4"));
+        }
+
+        void startGame(int pos) {
+            udpClient = new NewUDPClient(available_rooms[0]->ip, available_rooms[0]->port);
+        }
+
+        void listen(void) {
+            udpClient->receive();
+        }
+
+        void parse_from_cli(void) {
+            while (true) {
+                std::string message;
+                std::cout << "\nEnter command: ";
+                std::getline(std::cin, message);
+
+                udpClient->sendCommand(message);
+            }
+        }
+
+        void join(void) {
+            udpClient->join();
+        }
+        NewUDPClient *udpClient;
+        std::vector<AvailableRooms*> available_rooms;
 };
 
 }

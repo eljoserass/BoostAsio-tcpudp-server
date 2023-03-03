@@ -16,7 +16,7 @@ namespace Server {
             void deleteRoomById(boost::uuids::uuid id);
             vector<tuple<boost::uuids::uuid, string>> getRoomsInfo(void);
             vector<string> getPlayersByRoomId(boost::uuids::uuid roomId);
-            boost::uuids::uuid addPlayer(std::shared_ptr<boost::asio::ip::tcp::socket> socket, const string playerName);
+            boost::uuids::uuid addPlayer(string& playerName);
             void addPlayerToRoom(boost::uuids::uuid roomId, boost::uuids::uuid playerId);
             void removePlayerFromRoom(boost::uuids::uuid playerId);
             void startGame(void);
@@ -26,7 +26,14 @@ namespace Server {
             void setPlayerReady(boost::uuids::uuid playerId);
             void setPlayerNotReady(boost::uuids::uuid playerId);
             vector<tuple<boost::uuids::uuid, string>> getPlayersInfoByRoomId(boost::uuids::uuid roomId);
-
+            bool getIsPlayerReady(boost::uuids::uuid playerId) {
+                for (auto &player: _players) {
+                    if (player.getPlayerId() == playerId) {
+                        return player.getIsReady();
+                    }
+                }
+                return false;
+            }
             vector<Player> _players;
             GameManager *_GameManager;
 

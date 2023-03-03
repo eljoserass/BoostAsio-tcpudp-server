@@ -14,7 +14,7 @@ The mainServer will use this to manager to orchestrate what happens with the gam
 namespace Server {
     class GameManager {
         public:
-            int startGame(std::string room);
+            int startGame(std::string room, int opPort, boost::asio::io_context &io_context, AbstractECS *ecs);
             void endGameByRoomId(std::string room);
             void joinThreads(void);
         private:

@@ -23,7 +23,7 @@ Class that will contain all info necessary about a client that is connected
 namespace Server {
     class Player {
         public:
-            Player(std::shared_ptr<boost::asio::ip::tcp::socket> socket, const string playerName);
+            Player(string& playerName);
             // ~Player(void);
             void setPlayerId(const string playerName);
             boost::uuids::uuid getPlayerId(void);
