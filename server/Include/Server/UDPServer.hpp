@@ -9,8 +9,6 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <cstring>
-#include "../Room/Room.hpp"
-#include "../Player/Player.hpp"
 
 using boost::asio::ip::udp;
 
@@ -32,16 +30,7 @@ namespace Server {
 
             void start_receive();
             void handle_receive(const boost::system::error_code& error, std::size_t received);
-            void update_gane_ready() {
-                int count_ready = 0;
-                for (auto& client: clients_) {
-                    if (client.second)
-                        count_ready++;
-                }
-                if (count_ready >= clients_.size()) {
-                    *isGameReady = true;
-                }
-            }
+            void update_game_ready();
             void handle_send(boost::shared_ptr<std::string> message,
                             const boost::system::error_code& error,
                             std::size_t bytes) {/* here measure data sent (maybe a .log?)*/};

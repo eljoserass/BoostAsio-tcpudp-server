@@ -4,7 +4,7 @@
 using namespace ClientController;
 
 int main(int ac, char **av) {
-    NewClientServer *clientServer = new NewClientServer();
+    ClientServer *clientServer = new ClientServer();
 
     clientServer->startGame(atoi(av[1]));
 

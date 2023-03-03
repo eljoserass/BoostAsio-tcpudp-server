@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Servers/UDPServer.hpp"
+#include "../Server/UDPServer.hpp"
 
 /*
 Class that contains all info about communicating the game state provided by the ECS(Engine)
@@ -20,8 +20,6 @@ class AbstractECS {
             while(true)
                 logic(clientMessage, ECSResponse, isGameRead);
         }
-
-
 };
 
 namespace Server {

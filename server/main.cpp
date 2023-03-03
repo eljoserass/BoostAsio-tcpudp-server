@@ -1,12 +1,11 @@
-#include "TCPServer.hpp"
+#include "UDPServer.hpp"
+#include "GameManager.hpp"
 using namespace Server;
-
 
 class ECSinmain: public AbstractECS {
     public:
-        ECSinmain(){
+        ECSinmain(){}
 
-        }
         void logic(std::shared_ptr<std::string> &clientMessage, std::shared_ptr<std::string>& ECSResponse,  std::shared_ptr<bool>& isGameReady) {
             sleep(1);
             *ECSResponse = " THIS IS SENT FROM ECS (IN MAIN) TO CLIENT " + std::to_string(rand());
@@ -18,9 +17,8 @@ class ECSinmain: public AbstractECS {
 
 class RTYPE: public AbstractECS {
     public:
-        RTYPE(){
+        RTYPE(){}
 
-        }
         void logic(std::shared_ptr<std::string> &clientMessage, std::shared_ptr<std::string>& ECSResponse,  std::shared_ptr<bool>& isGameReady) {
             sleep(1);
             *ECSResponse = " THIS IS SENT FROM ECS (IN MAIN) TO CLIENT " + std::to_string(rand());
@@ -32,9 +30,8 @@ class RTYPE: public AbstractECS {
 
 class MINESWEEPER: public AbstractECS {
     public:
-        MINESWEEPER(){
+        MINESWEEPER(){}
 
-        }
         void logic(std::shared_ptr<std::string> &clientMessage, std::shared_ptr<std::string>& ECSResponse,  std::shared_ptr<bool>& isGameReady) {
             sleep(1);
             *ECSResponse = " THIS IS SENT FROM ECS (IN MAIN) TO CLIENT " + std::to_string(rand());

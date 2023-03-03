@@ -2,23 +2,20 @@
 
 using namespace ClientController;
 
-
-
-
-NewClientServer::NewClientServer() {
+ClientServer::ClientServer() {
     available_rooms.push_back(new AvailableRooms("localhost", "1234", "room1", "easy", "4"));
     available_rooms.push_back(new AvailableRooms("localhost", "6969", "room2", "easy", "4"));
 }
 
-void NewClientServer::startGame(int pos) {
-    udpClient = new NewUDPClient(available_rooms[0]->ip, available_rooms[0]->port);
+void ClientServer::startGame(int pos) {
+    udpClient = new UDPClient(available_rooms[0]->ip, available_rooms[0]->port);
 }
 
-void NewClientServer::listen(void) {
+void ClientServer::listen(void) {
     udpClient->receive();
 }
 
-void NewClientServer::parse_from_cli(void) {
+void ClientServer::parse_from_cli(void) {
     while (true) {
         std::string message;
         std::cout << "\nEnter command: ";
@@ -28,6 +25,6 @@ void NewClientServer::parse_from_cli(void) {
     }
 }
 
-void NewClientServer::join(void) {
+void ClientServer::join(void) {
     udpClient->join();
 }

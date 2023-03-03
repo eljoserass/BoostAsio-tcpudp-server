@@ -6,16 +6,12 @@ RM	= rm -f
 
 SRCS	=	./Game/Game.cpp 		\
 			./Game/GameManager.cpp	\
-			./Player/Player.cpp		\
-			./Room/Room.cpp			\
-			./Room/RoomManager.cpp	\
-			./Servers/TCPServer.cpp \
-			./Servers/UDPServer.cpp \
+			./Server/UDPServer.cpp \
 			./main.cpp 
 
 OBJS	= $(SRCS:.cpp=.o)
 
-CPPFLAGS = -I./Include/Room -I./Include/Player -I./Include/Game -I./Include/Servers
+CPPFLAGS = -I./Include/Game -I./Include/Server
 # CPPFLAGS += -Wall -Wextra
 
 LDFLAGS += -L/usr/local/lib -lboost_system -lpthread

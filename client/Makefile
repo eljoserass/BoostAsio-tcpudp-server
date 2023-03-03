@@ -4,7 +4,9 @@ CC			=	g++
 
 RM			=	rm -f
 
-SRCS		=	./main.cpp					\
+SRCS		=	./main.cpp						\
+				# ./ClientServer/ClientServer.cpp	\
+				# ./ClientServer/UDPClient.cpp	\
 
 OBJS		=	$(SRCS:.cpp=.o)
 

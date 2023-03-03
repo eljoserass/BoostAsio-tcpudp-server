@@ -8,10 +8,12 @@ include_directories(Include)
 
 set(SRC
     ClientServer/ClientServer.cpp
+    ClientServer/UDPClient.cpp
 )
 
 set(HEADERS
     Include/ClientServer.hpp
+    Include/UDPClient.hpp
 )
 
 add_library(client STATIC ${SRC} ${HEADERS})
