@@ -33,13 +33,13 @@ vector<string> RoomManager::getPlayersByRoomId(boost::uuids::uuid roomId)
 void RoomManager::startGame()
 {
     for (int i = 0; i < _rooms.size(); i++) {
-        if (isRoomReadyByRoomId(get<0>(_rooms[i].getRoomInfo())) == true) {
-            int port = _GameManager->startGame(get<1>(_rooms[i].getRoomInfo()));
-            string gameStarted = "gameStarted";
-            string stringPort = std::to_string(port);
-            string command = gameStarted + ";" + stringPort;
-            sendInfoByPlayersId(getPlayersIdByRoomId(get<0>(_rooms[i].getRoomInfo())), command);
-        }
+        // if (isRoomReadyByRoomId(get<0>(_rooms[i].getRoomInfo())) == true) {
+        //     // int port = _GameManager->startGame(get<1>(_rooms[i].getRoomInfo()));
+        //     string gameStarted = "gameStarted";
+        //     // string stringPort = std::to_string(port);
+        //     string command = gameStarted + ";" + stringPort;
+        //     sendInfoByPlayersId(getPlayersIdByRoomId(get<0>(_rooms[i].getRoomInfo())), command);
+        // }
     }
 }
 

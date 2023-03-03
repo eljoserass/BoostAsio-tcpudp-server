@@ -16,6 +16,8 @@ class ECS {
             while (true) {
                 sleep(4);
                 std::cout << "hello from ecs, this is what the client said: " << clientMessage->c_str() << std::endl;
+                *ECSResponse = " THIS IS SENT FROM ECS TO CLIENT ";
+                std::cout << "ECS says to client " << *ECSResponse << std::endl;
             }
         }
 };
@@ -23,9 +25,8 @@ class ECS {
 namespace Server {
     class Game {
         public:
-            Game(int port);
+            Game(int port, boost::asio::io_context &io_context);
             void run(void);
-            boost::asio::io_context io_context;
         private:
             void run_ecs(std::shared_ptr<std::string> &clientMessage, std::shared_ptr<std::string>& ECSResponse);
             int port_;

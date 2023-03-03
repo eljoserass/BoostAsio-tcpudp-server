@@ -1,10 +1,10 @@
 #include "../Include/Game/Game.hpp"
 using namespace Server;
 
-void run_server(UDPServer &server)
-{
-    server.run();
-}
+// void run_server(UDPServer &server)
+// {
+//     server.run();
+// }
 
 void send_response(UDPServer &server, std::shared_ptr<std::string> &ECSResponse) 
 {
@@ -14,10 +14,10 @@ void send_response(UDPServer &server, std::shared_ptr<std::string> &ECSResponse)
     }
 }
 
-Game::Game(int port) : server_(port), ecs_()
+Game::Game(int port, boost::asio::io_context &io_context) : server_(port, io_context), ecs_()
 {
     ECSResponse_ = std::make_shared<std::string>(std::string(" default message ecs"));
-    server_thread = std::thread(run_server, std::ref(server_));
+    // server_thread = std::thread(run_server, std::ref(server_));
     sender_thread = std::thread(send_response, std::ref(server_), std::ref(ECSResponse_));
     port_ = port;
     isRunning = true;
@@ -26,7 +26,7 @@ Game::Game(int port) : server_(port), ecs_()
 void Game::run()
 {  
     run_ecs(server_.clientMessage_, ECSResponse_);
-    server_thread.join();
+    // server_thread.join();
     sender_thread.join();
     isRunning = false;
 }

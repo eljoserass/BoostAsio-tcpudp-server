@@ -1,9 +1,9 @@
 #include "../Include/Game/GameManager.hpp"
 using namespace Server;
 
-void run_game_thread(Game *game)
+void run_game_thread(Game &game)
 {
-    game->run();
+    game.run();
 }
 
 int getAvailablePort() {
@@ -35,22 +35,26 @@ int getAvailablePort() {
     return port;
 }
 
-int GameManager::startGame(std::string room)
+int GameManager::startGame(std::string room, int optPort, boost::asio::io_context &io_context)
 {
+    
     int port = -1;
-
+    port = getAvailablePort();
+    if (optPort != -1)
+        port = optPort;
     if (games_.count(room.c_str()) == 0) {
-        port = getAvailablePort();
+  
         std::cout << "game started in port " << port << std::endl;
-        games_[room.c_str()] = new Game(port);
+        games_[room.c_str()] = new Game(port, io_context);
         Game *tempgame = games_[room.c_str()];
-        gamesTread.push_back(std::thread(run_game_thread, tempgame));
+        gamesTread.push_back(std::thread(run_game_thread, std::ref(*tempgame)));
     }
     return port;
 }
 void GameManager::endGameByRoomId(std::string room) {
     games_.erase(room.c_str());
 }
+
 void GameManager::joinThreads(void) {
     for (int i = 0; i < gamesTread.size(); i++) {
         gamesTread[i].join();

@@ -17,13 +17,12 @@ using boost::asio::ip::udp;
 namespace Server {
     class UDPServer {
         public:
-            UDPServer(int port);
+            UDPServer(int port, boost::asio::io_context &io_context);
             void send_to_all(const std::string &message);
-            void run(void);
+            // void run(void);
             // void remove_players();
 
             std::shared_ptr<std::string> clientMessage_;
-            boost::asio::io_context io_context;
         private:
             udp::socket socket_;
             udp::endpoint remote_endpoint_;

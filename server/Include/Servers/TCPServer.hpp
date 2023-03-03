@@ -160,19 +160,19 @@ namespace Server {
                         sendMessage(socket, result);
                         break;
                     }
-                    if (command == "is_room_ready") {
-                        bool roomIsReady;
-                        boost::uuids::string_generator gen;
-                        boost::uuids::uuid roomUuid = gen(param1);
-                        roomIsReady = _RoomManager->isRoomReadyByRoomId(roomUuid);
-                        if (roomIsReady == true) {
-                            int port = _RoomManager->_GameManager->startGame("room"); // cambiar esto
-                            result = "is_room_ready;" + boost::lexical_cast<std::string>(param1) + ":" + boost::lexical_cast<std::string>(port);
-                        } else
-                            result = "is_room_ready;" + boost::lexical_cast<std::string>(param1) + ":false";
-                        sendMessage(socket, result);
-                        break;  
-                    }
+                    // if (command == "is_room_ready") {
+                    //     bool roomIsReady;
+                    //     boost::uuids::string_generator gen;
+                    //     boost::uuids::uuid roomUuid = gen(param1);
+                    //     roomIsReady = _RoomManager->isRoomReadyByRoomId(roomUuid);
+                    //     if (roomIsReady == true) {
+                    //         // int port = _RoomManager->_GameManager->startGame("room"); // cambiar esto
+                    //         result = "is_room_ready;" + boost::lexical_cast<std::string>(param1) + ":" + boost::lexical_cast<std::string>(port);
+                    //     } else
+                    //         result = "is_room_ready;" + boost::lexical_cast<std::string>(param1) + ":false";
+                    //     sendMessage(socket, result);
+                    //     break;  
+                    // }
                     sendMessage(socket, result);
                 }
                 

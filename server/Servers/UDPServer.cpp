@@ -1,7 +1,7 @@
 #include "../Include/Servers/UDPServer.hpp"
 using namespace Server;
 
-UDPServer::UDPServer(int port) : socket_(io_context, udp::endpoint(udp::v4(), port)), mtx(), io_context()
+UDPServer::UDPServer(int port, boost::asio::io_context &io_context) : socket_(io_context, udp::endpoint(udp::v4(), port)), mtx()
 {
     start_receive();
     clientMessage_ = std::make_shared<std::string>(std::string("default message"));
@@ -9,18 +9,26 @@ UDPServer::UDPServer(int port) : socket_(io_context, udp::endpoint(udp::v4(), po
 
 void UDPServer::send_to_all(const std::string &message)
 {
+
+        boost::shared_ptr<std::string> message_clients(
+                new std::string("message"));
+
     for (const auto &client : clients_) {
         // if (client.second == true) {
             udp::endpoint endpoint = client.first;
             socket_.send_to(boost::asio::buffer(message), endpoint);
+            // socket_.async_send_to(boost::asio::buffer(*message_clients), remote_endpoint_,
+            // boost::bind(&UDPServer::handle_send, this, message,
+            // boost::asio::placeholders::error,
+            // boost::asio::placeholders::bytes_transferred));
         // }
     }
 }
 
-void UDPServer::run(void)
-{
-    io_context.run();
-}
+// void UDPServer::run(void)
+// {
+//     io_context.run();
+// }
 
 void UDPServer::start_receive() {
     std::cout << "start_recieve" << std::endl;
