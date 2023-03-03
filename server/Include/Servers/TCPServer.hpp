@@ -112,7 +112,7 @@ namespace Server {
                     }
                     if (command == "room_info") {
                         // rooms_info;room1:uuid;room2:uuid
-                        std::cout << "enter in roomInfo" << std::endl;
+                        // std::cout << "enter in roomInfo" << std::endl;
                         // vector<tuple<boost::uuids::uuid, string>> _roomsInfo;
                         result = "room_info;";
                         for (int i = 0; i < _RoomManager->getRoomsInfo().size(); i++)

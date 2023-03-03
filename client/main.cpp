@@ -17,11 +17,10 @@ int main(int argc, char **argv) {
         clientServer->run();
 
 
-
-        clientServer->setPlayerName("name" + std::to_string(rand() %10000));
+        clientServer->setPlayerName("name" + std::string(argv[1]) );
         
         // create a room
-        clientServer->createRoom("rowwwom" + std::to_string(rand() %10000));
+        clientServer->createRoom("rowwwom" + std::string(argv[2]));
 
         // // read avaialbe rooms to join
         // std::vector<std::tuple<std::string, std::string>> rooms = clientServer->clientData->currentAvailableRooms;
