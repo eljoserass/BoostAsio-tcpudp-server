@@ -2,6 +2,18 @@
 
 using namespace ClientController;
 
+// int main (int ac, char **av) {
+//     ClientServer *clientServer = new ClientServer();
+//     clientServer->startUdp(av[1]);
+//     std::string input;
+//      while (true) {
+//         std::cout << "before getline" << *clientServer->gameState << std::endl;
+//         std::getline (std::cin,input);
+//         clientServer->sendUdpCommand(input);
+//     }
+
+// }
+
 // int main(int argc, char **argv) {
 //     try {
 
@@ -111,35 +123,104 @@ using namespace ClientController;
 //     return (0);
 // }
 
+void run_receive_thread(udp::socket& socket, udp::endpoint& sender_endpoint) {
+    while (true) {
+        boost::array<char, 1028> recv_buf;
+        size_t len = socket.receive_from(boost::asio::buffer(recv_buf), sender_endpoint);
+        std::cout.write(recv_buf.data(), len);
+        std::cout.write("\n", 1);
+    }
+}
+
+class NewUDPClient {
+    public:
+        NewUDPClient(std::string ip, std::string port) : 
+            io_service(), 
+            socket(io_service, udp::endpoint(udp::v4(), 0)), 
+            resolver(io_service),
+            query(udp::v4(), ip, port),
+            sender_endpoint()
+        {
+           receiver_endpoint =  *resolver.resolve(query);
+           sendCommand("clientConnect");
+        }
+
+        int sendCommand(std::string command) {
+            boost::system::error_code error;
+            socket.send_to(boost::asio::buffer(command), receiver_endpoint, 0, error);
+            if (error && error != boost::asio::error::message_size) {
+                 std::cerr << "Error sending message: " << error.message() << std::endl;
+                return (84);
+            }
+            return (0);
+        }
+
+        void receive() {
+            // boost::array<char, 128> recv_buf;
+            // size_t len = socket.receive_from(boost::asio::buffer(recv_buf), sender_endpoint);
+            // std::cout.write(recv_buf.data(), len);
+            receiver_thread = std::thread(run_receive_thread, std::ref(socket), std::ref(sender_endpoint));
+        }
+
+        void join() {
+            receiver_thread.join();
+        }
+
+
+        boost::asio::io_service io_service;
+        udp::socket socket;
+        udp::resolver resolver;
+        udp::resolver::query query;
+        udp::endpoint receiver_endpoint;
+        udp::endpoint sender_endpoint;
+        std::thread receiver_thread;
+
+};
+
+// int main(int ac, char **av) {
+//   boost::asio::io_service io_service;
+//   udp::socket socket(io_service, udp::endpoint(udp::v4(), 0));
+
+//   udp::resolver resolver(io_service);
+//   udp::resolver::query query(udp::v4(), "localhost", av[1]);
+//   udp::endpoint receiver_endpoint = *resolver.resolve(query);
+//   udp::endpoint sender_endpoint;
+
+//   while (true) {
+//     std::string message;
+//     std::cout << "Enter command: ";
+//     std::getline(std::cin, message);
+
+//     boost::system::error_code error;
+//     socket.send_to(boost::asio::buffer(message), receiver_endpoint, 0, error);
+//     boost::array<char, 128> recv_buf;
+//     size_t len = socket.receive_from(
+//     boost::asio::buffer(recv_buf), sender_endpoint);
+//     std::cout.write(recv_buf.data(), len);
+//     if (error && error != boost::asio::error::message_size) {
+//       std::cerr << "Error sending message: " << error.message() << std::endl;
+//       break;
+//     }
+//   }
+
+//   return 0;
+// }
 
 
 int main(int ac, char **av) {
-  boost::asio::io_service io_service;
-  udp::socket socket(io_service, udp::endpoint(udp::v4(), 0));
+    NewUDPClient *client = new NewUDPClient("localhost", av[1]);
 
-  udp::resolver resolver(io_service);
-  udp::resolver::query query(udp::v4(), "localhost", av[1]);
-  udp::endpoint receiver_endpoint = *resolver.resolve(query);
-  udp::endpoint sender_endpoint;
+    client->receive();
+    while (true) {
+        std::string message;
+        std::cout << "\nEnter command: ";
+        std::getline(std::cin, message);
 
-  while (true) {
-    std::string message;
-    std::cout << "Enter command: ";
-    std::getline(std::cin, message);
-
-    boost::system::error_code error;
-    socket.send_to(boost::asio::buffer(message), receiver_endpoint, 0, error);
-    boost::array<char, 128> recv_buf;
-    size_t len = socket.receive_from(
-    boost::asio::buffer(recv_buf), sender_endpoint);
-    std::cout.write(recv_buf.data(), len);
-    if (error && error != boost::asio::error::message_size) {
-      std::cerr << "Error sending message: " << error.message() << std::endl;
-      break;
+        client->sendCommand(message);
+        
     }
-  }
-
-  return 0;
+    client->join();
+    return (0);
 }
 
 
