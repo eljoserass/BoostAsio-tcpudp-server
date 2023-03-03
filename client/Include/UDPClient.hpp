@@ -4,6 +4,7 @@
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
 #include <boost/algorithm/string.hpp>
+#include <msgpack.hpp>
 
 using boost::asio::ip::udp;
 using boost::asio::ip::tcp;
@@ -17,6 +18,7 @@ namespace ClientController {
             int sendCommand(std::string command);
             void receive();
             void join();
+            std::string passToBinary(std::string command);
 
 
             boost::asio::io_service io_service;

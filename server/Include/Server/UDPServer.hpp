@@ -34,5 +34,6 @@ namespace Server {
             void handle_send(boost::shared_ptr<std::string> message,
                             const boost::system::error_code& error,
                             std::size_t bytes) {/* here measure data sent (maybe a .log?)*/};
+            std::string hexToBinary(const std::string &hex);
     };
 }

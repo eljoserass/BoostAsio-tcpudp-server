@@ -39,6 +39,17 @@ void UDPServer::update_game_ready() {
     }
 }
 
+std::string UDPServer::hexToBinary(const std::string& hex)
+{
+    std::string binary;
+    binary.reserve(hex.length() / 2);
+    for (std::string::size_type i = 0; i < hex.length(); i += 2) {
+        int byte = std::stoi(hex.substr(i, 2), nullptr, 16);
+        binary.push_back(static_cast<char>(byte));
+    }
+    return binary;
+}
+
 void UDPServer::handle_receive(const boost::system::error_code& error, std::size_t received) {
     if (!error) {
         if (clients_.count(remote_endpoint_) == 0) {
@@ -46,9 +57,10 @@ void UDPServer::handle_receive(const boost::system::error_code& error, std::size
         }
         boost::shared_ptr<std::string> message(
                 new std::string("ok"));
-        mtx.lock(); 
-        std::cout << "received in server from client "<<  std::string(recv_buffer_.begin(), received)<< std::endl;
-        clientMessage_ = std::make_shared<std::string>(std::string(recv_buffer_.begin(), received));
+        mtx.lock();
+        std::string test = hexToBinary(std::string(recv_buffer_.begin(), received));
+        std::cout << "received in server from client "<<  test << std::endl;
+        clientMessage_ = std::make_shared<std::string>(test);
         mtx.unlock();
 
         std::map<udp::endpoint, bool>::iterator it = clients_.find(remote_endpoint_); 

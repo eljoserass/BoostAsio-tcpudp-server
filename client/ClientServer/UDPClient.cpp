@@ -27,10 +27,25 @@ UDPClient::UDPClient(std::string ip, std::string port) :
     sendCommand("clientConnect");
 }
 
+std::string UDPClient::passToBinary(std::string command)
+{
+    std::stringstream buffer;
+    msgpack::pack(buffer, command);
+    std::string result;
+    std::string binary = buffer.str();
+
+    for (int i = 1; i < binary.size(); i++) {
+        char hex[3];
+        sprintf(hex, "%02x", (unsigned char)binary[i]);
+        result.append(hex);
+    }
+    return result;
+}
+
 int UDPClient::sendCommand(std::string command) {
+    std::string binary = passToBinary(command);
     boost::system::error_code error;
-    // pasar a binario
-    socket.send_to(boost::asio::buffer(command), receiver_endpoint, 0, error);
+    socket.send_to(boost::asio::buffer(binary), receiver_endpoint, 0, error);
     if (error && error != boost::asio::error::message_size) {
         std::cerr << "Error sending message: " << error.message() << std::endl;
         return (84);
