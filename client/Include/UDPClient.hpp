@@ -4,7 +4,6 @@
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
 #include <boost/algorithm/string.hpp>
-#include <msgpack.hpp>
 
 using boost::asio::ip::udp;
 using boost::asio::ip::tcp;

@@ -44,18 +44,23 @@ void UDPServer::handle_receive(const boost::system::error_code& error, std::size
         if (clients_.count(remote_endpoint_) == 0) {
             clients_[remote_endpoint_] = false;
         }
+        std::cout << "RECEIVED FROM  " << remote_endpoint_ << std::endl;
         boost::shared_ptr<std::string> message(
                 new std::string("ok"));
+        std::stringstream buffer_message;
+
+        buffer_message << remote_endpoint_ << "/" << std::string(recv_buffer_.begin(), received); 
+
         mtx.lock();
-        std::cout << "received in server from client "<<  std::string(recv_buffer_.begin(), received) << std::endl;
-        clientMessage_ = std::make_shared<std::string>(std::string(recv_buffer_.begin(), received));
+        std::cout << "received in server from client "<<  buffer_message.str() << std::endl;
+        clientMessage_ = std::make_shared<std::string>(buffer_message.str());
         mtx.unlock();
 
         std::map<udp::endpoint, bool>::iterator it = clients_.find(remote_endpoint_); 
-        if (*clientMessage_ == "ready") {
+        if (getMessage(*clientMessage_) == "ready") {
             if (it != clients_.end())
                 it->second = true;
-        } else if (*clientMessage_ == "notready"){
+        } else if (getMessage(*clientMessage_) == "notready"){
             if (it != clients_.end())
                 it->second = false;
         }

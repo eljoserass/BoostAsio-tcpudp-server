@@ -20,13 +20,13 @@ Game::Game(int port, boost::asio::io_context &io_context, AbstractECS *ecs) : se
 
 void Game::run()
 {  
-    run_ecs(server_.clientMessage_, ECSResponse_ , server_.isGameReady);
+    run_ecs(server_.clientMessage_, ECSResponse_ , server_.isGameReady, server_.clients_, server_.socket_);
     // server_thread.join();
     sender_thread.join();
     isRunning = false;
 }
 
-void Game::run_ecs(std::shared_ptr<std::string> &clientMessage, std::shared_ptr<std::string>& ECSResponse,  std::shared_ptr<bool>& isGameReady)
+void Game::run_ecs(std::shared_ptr<std::string> &clientMessage, std::shared_ptr<std::string>& ECSResponse,  std::shared_ptr<bool>& isGameReady, std::map<udp::endpoint, bool>& players, udp::socket &socket)
 {
-    _ecs->run(clientMessage,ECSResponse, isGameReady);
+    _ecs->run(clientMessage,ECSResponse, isGameReady, players, socket);
 }
