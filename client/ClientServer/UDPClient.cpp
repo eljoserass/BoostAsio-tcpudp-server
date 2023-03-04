@@ -29,6 +29,10 @@ UDPClient::UDPClient(std::string ip, std::string port) :
 
 int UDPClient::sendCommand(std::string command) {
     boost::system::error_code error;
+    boost::system::error_code ec;
+    boost::asio::ip::udp::endpoint endpoint = socket.remote_endpoint(ec);
+    
+
     socket.send_to(boost::asio::buffer(command), receiver_endpoint, 0, error);
     if (error && error != boost::asio::error::message_size) {
         std::cerr << "Error sending message: " << error.message() << std::endl;

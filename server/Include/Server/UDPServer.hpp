@@ -8,9 +8,13 @@
 #include <map>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <boost/algorithm/string.hpp>
 #include <cstring>
 
 using boost::asio::ip::udp;
+
+
+
 
 namespace Server {
     class UDPServer {
@@ -19,15 +23,28 @@ namespace Server {
             void send_to_all(const std::string &message);
             std::shared_ptr<std::string> clientMessage_;
             std::shared_ptr<bool> isGameReady;
-        private:
+            std::map<udp::endpoint, bool> clients_;
             udp::socket socket_;
+
+            std::string getId(std::string& message) {
+                std::vector <std::string> parsed;
+                boost::split(parsed, message, boost::is_any_of("/"));
+                return (parsed[0]);
+            }
+
+            std::string getMessage(std::string& message) {
+                std::vector <std::string> parsed;
+                boost::split(parsed, message, boost::is_any_of("/"));
+                return (parsed[1]);
+            }
+        private:
+            
             udp::endpoint remote_endpoint_;
             boost::array<char, 1024> recv_buffer_;
-            std::map<udp::endpoint, bool> clients_;
+
             
             std::mutex mtx;
             
-
             void start_receive();
             void handle_receive(const boost::system::error_code& error, std::size_t received);
             void update_game_ready();
