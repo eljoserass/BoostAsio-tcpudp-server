@@ -4,7 +4,7 @@ using namespace Server;
 void send_response(UDPServer &server, std::shared_ptr<std::string> &ECSResponse) 
 {
     while (true) {
-        sleep(1);
+        // sleep(1);
         server.send_to_all(ECSResponse->c_str());
     }
 }
