@@ -14,17 +14,7 @@
 using boost::asio::ip::udp;
 
 
-std::string getId(std::string& message) {
-    std::vector <std::string> parsed;
-    boost::split(parsed, message, boost::is_any_of("/"));
-    return (parsed[0]);
-}
 
-std::string getMessage(std::string& message) {
-    std::vector <std::string> parsed;
-    boost::split(parsed, message, boost::is_any_of("/"));
-    return (parsed[1]);
-}
 
 namespace Server {
     class UDPServer {
@@ -35,6 +25,18 @@ namespace Server {
             std::shared_ptr<bool> isGameReady;
             std::map<udp::endpoint, bool> clients_;
             udp::socket socket_;
+
+            std::string getId(std::string& message) {
+                std::vector <std::string> parsed;
+                boost::split(parsed, message, boost::is_any_of("/"));
+                return (parsed[0]);
+            }
+
+            std::string getMessage(std::string& message) {
+                std::vector <std::string> parsed;
+                boost::split(parsed, message, boost::is_any_of("/"));
+                return (parsed[1]);
+            }
         private:
             
             udp::endpoint remote_endpoint_;

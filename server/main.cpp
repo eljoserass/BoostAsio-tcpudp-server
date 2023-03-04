@@ -12,6 +12,16 @@ class ECSinmain: public AbstractECS {
             
             std::cout << "hello from ecs IN MAIN, this is what the client said: " << clientMessage->c_str() << std::endl;
             std::cout << "ECS (in main) says to client " << *ECSResponse << std::endl;
+            std::cout << "id: " << getId(*clientMessage) << std::endl;
+            std::cout << "messsage: " << getMessage(*clientMessage) << std::endl;
+
+            for (const auto &client : players) {
+                if (client.second == true) {
+                    udp::endpoint endpoint = client.first;
+                    std::string messagetoclient("this is just for you babay ");
+                    send_to_client(endpoint, sender, messagetoclient);
+                }
+            }
         }
 };
 
@@ -25,6 +35,15 @@ class RTYPE: public AbstractECS {
             
             std::cout << "hello from ecs IN MAIN, this is what the client said: " << clientMessage->c_str() << std::endl;
             std::cout << "ECS (in main) says to client " << *ECSResponse << std::endl;
+            std::cout << "this is the command: " << getMessage(*clientMessage) << std::endl;
+
+            for (const auto &client : players) {
+                if (client.second == true) {
+                    udp::endpoint endpoint = client.first;
+                    std::string messagetoclient("this is just for you babay ");
+                    send_to_client(endpoint, sender, messagetoclient);
+                }
+            }
         }
 };
 
