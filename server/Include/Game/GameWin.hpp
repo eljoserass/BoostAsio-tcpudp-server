@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Server/UDPServer.hpp"
+#include "../Server/UDPServerWin.hpp"
 
 /*
 Class that contains all info about communicating the game state provided by the ECS(Engine)
