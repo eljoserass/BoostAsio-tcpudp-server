@@ -8,16 +8,23 @@ UDPServer::UDPServer(int port, boost::asio::io_context &io_context) : socket_(io
     isGameReady = std::make_shared<bool>(bool(false));
 }
 
-void UDPServer::send_to_all(const std::string &message)
+std::string UDPServer::passStringToBinary(const std::string &str)
 {
+    const unsigned char* data = reinterpret_cast<const unsigned char*>(str.c_str());
+    std::string result(data, data + str.size());
+    return result;
+}
+
+void UDPServer::send_to_all(const std::string& message) {
     if (*isGameReady) {
-        for (const auto &client : clients_) {
+        std::string binaryMessage = passStringToBinary(message);
+        for (const auto& client : clients_) {
             if (client.second == true) {
                 udp::endpoint endpoint = client.first;
-                socket_.send_to(boost::asio::buffer(message), endpoint);
+                socket_.send_to(boost::asio::buffer(binaryMessage), endpoint);
             }
         }
-    }  
+    }
 }
 
 void UDPServer::start_receive() {
@@ -39,7 +46,7 @@ void UDPServer::update_game_ready() {
     }
 }
 
-std::string readStringFromBinary(std::istream &&input)
+std::string UDPServer::readStringFromBinary(std::istream &&input)
 {
     input.seekg(0, std::ios::end);
     std::size_t length = input.tellg();
