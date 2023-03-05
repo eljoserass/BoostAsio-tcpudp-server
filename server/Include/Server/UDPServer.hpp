@@ -42,11 +42,10 @@ namespace Server {
             udp::endpoint remote_endpoint_;
             boost::array<char, 1024> recv_buffer_;
 
-            
             std::mutex mtx;
             
             void start_receive();
-            void handle_receive(const boost::system::error_code& error, std::size_t received);
+            void handle_receive(const boost::system::error_code& error, std::size_t bytes_transferred);
             void update_game_ready();
             void handle_send(boost::shared_ptr<std::string> message,
                             const boost::system::error_code& error,
