@@ -33,8 +33,8 @@ class AbstractECS {
 
         virtual void run(std::shared_ptr<std::string> &clientMessage, std::shared_ptr<std::string>& ECSResponse,  std::shared_ptr<bool>& isGameReady, std::map<udp::endpoint, bool>& players, udp::socket& sender) {
             block(isGameReady);
-            while(true)
-                logic(clientMessage, ECSResponse, isGameReady, players, sender);
+            // while(true)
+            logic(clientMessage, ECSResponse, isGameReady, players, sender);
         }
 };
 
