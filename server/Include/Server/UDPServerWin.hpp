@@ -6,8 +6,9 @@
 #include <boost/asio.hpp>
 #include <boost/bind/bind.hpp>
 #include <map>
-#include <sys/socket.h>
-#include <netinet/in.h>
+#ifndef __WIN32__
+#include <winsock2.h>
+#include <Ws2tcpip.h>
 #include <boost/algorithm/string.hpp>
 #include <cstring>
 #include <bitset>

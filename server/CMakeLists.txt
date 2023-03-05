@@ -12,18 +12,23 @@ if(WIN32)
     Game/GameManagerWin.cpp
     Server/UDPServer.cpp
     )
+    set(HEADER
+    Include/Game/Game.hpp
+    Include/Game/GameManager.hpp
+    Include/Server/UDPServerWin.hpp
+)
 else()
     set(SRC
     Game/Game.cpp
     Game/GameManager.cpp
     Server/UDPServer.cpp
     )
-endif()
-set(HEADER
+    set(HEADER
     Include/Game/Game.hpp
     Include/Game/GameManager.hpp
     Include/Server/UDPServer.hpp
 )
+endif()
 
 add_library(server STATIC ${SRC} ${HEADER})
 
