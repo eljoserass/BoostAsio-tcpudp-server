@@ -2,27 +2,28 @@
 
 using namespace ClientController;
 
-std::string readStringFromBinary(std::istringstream &iss) {
-    std::ostringstream oss;
-    std::copy(std::istreambuf_iterator<char>(iss),
-              std::istreambuf_iterator<char>(),
-              std::ostreambuf_iterator<char>(oss));
-    return oss.str();
+std::string binaryToString(const std::string &binaryStr)
+{
+    std::string result;
+    std::bitset<8> bits;
+    for (size_t i = 0; i < binaryStr.size(); i += 8) {
+        bits = std::bitset<8>(binaryStr.substr(i, 8));
+        char c = static_cast<char>(bits.to_ulong());
+        result.push_back(c);
+    }
+    return result;
 }
 
 void run_receive_thread(udp::socket& socket, udp::endpoint& sender_endpoint, std::shared_ptr<std::string>& response) {
     while (true) {
         boost::array<char, 1028> recv_buf;
-
         size_t len = socket.receive_from(boost::asio::buffer(recv_buf), sender_endpoint);
-        std::istringstream iss(std::string(recv_buf.data(), len));
-        std::string strData = readStringFromBinary(iss);
 
+        if (len % 8 != 0)
+            continue;
+        std::string strData = binaryToString(std::string(recv_buf.data(), len));
         *response = strData;
-
-        /// REMOVE WHEN NOT USING CLI!
-        std::cout.write(recv_buf.data(), len);
-        std::cout.write("\n", 1);
+        std::cout << "response = " << *response << std::endl;
     }
 }
 
