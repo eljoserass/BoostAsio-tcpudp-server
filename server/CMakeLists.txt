@@ -8,9 +8,9 @@ include_directories(Include)
 
 if(WIN32)
     set(SRC
-    Game/Game.cpp
+    Game/GameWin.cpp
     Game/GameManagerWin.cpp
-    Server/UDPServer.cpp
+    Server/UDPServerWin.cpp
     )
     set(HEADER
     Include/Game/GameWin.hpp
