@@ -8,16 +8,39 @@ UDPServer::UDPServer(int port, boost::asio::io_context &io_context) : socket_(io
     isGameReady = std::make_shared<bool>(bool(false));
 }
 
-void UDPServer::send_to_all(const std::string &message)
+std::string UDPServer::getId(std::string& message) {
+    std::vector <std::string> parsed;
+    boost::split(parsed, message, boost::is_any_of("/"));
+    return (parsed[0]);
+}
+
+std::string UDPServer::getMessage(std::string& message) {
+    std::vector <std::string> parsed;
+    boost::split(parsed, message, boost::is_any_of("/"));
+    return (parsed[1]);
+}
+
+std::string UDPServer::passStringToBinary(const std::string &str)
 {
+    const unsigned char* data = reinterpret_cast<const unsigned char*>(str.c_str());
+    std::string result;
+    for (std::size_t i = 0; i < str.size(); ++i) {
+        std::bitset<8> byte(data[i]);
+        result += byte.to_string();
+    }
+    return result;
+}
+
+void UDPServer::send_to_all(const std::string& message) {
     if (*isGameReady) {
-        for (const auto &client : clients_) {
+        std::string binaryMessage = passStringToBinary(message);
+        for (const auto& client : clients_) {
             if (client.second == true) {
                 udp::endpoint endpoint = client.first;
-                socket_.send_to(boost::asio::buffer(message), endpoint);
+                socket_.send_to(boost::asio::buffer(binaryMessage), endpoint);
             }
         }
-    }  
+    }
 }
 
 void UDPServer::start_receive() {
@@ -39,20 +62,37 @@ void UDPServer::update_game_ready() {
     }
 }
 
+std::string UDPServer::binaryToString(const std::string &binaryStr)
+{
+    std::string result;
+    std::bitset<8> bits;
+    for (size_t i = 0; i < binaryStr.size(); i += 8) {
+        bits = std::bitset<8>(binaryStr.substr(i, 8));
+        char c = static_cast<char>(bits.to_ulong());
+        result.push_back(c);
+    }
+    return result;
+}
+
 void UDPServer::handle_receive(const boost::system::error_code& error, std::size_t received) {
     if (!error) {
         if (clients_.count(remote_endpoint_) == 0) {
             clients_[remote_endpoint_] = false;
         }
         std::cout << "RECEIVED FROM  " << remote_endpoint_ << std::endl;
-        boost::shared_ptr<std::string> message(
-                new std::string("ok"));
+        boost::shared_ptr<std::string> message(new std::string("ok"));
         std::stringstream buffer_message;
 
-        buffer_message << remote_endpoint_ << "/" << std::string(recv_buffer_.begin(), received); 
+        if (recv_buffer_.begin() != nullptr) {
+            std::string received_string = binaryToString(std::string(recv_buffer_.begin(), received));
+            buffer_message << remote_endpoint_ << "/" << received_string; 
+        } else {
+            std::cerr << "Error: recv_buffer_.begin() is null" << std::endl;
+            return;
+        }
 
         mtx.lock();
-        std::cout << "received in server from client "<<  buffer_message.str() << std::endl;
+        std::cout << "received in server from client " << buffer_message.str() << std::endl;
         clientMessage_ = std::make_shared<std::string>(buffer_message.str());
         mtx.unlock();
 
