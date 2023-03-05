@@ -13,8 +13,8 @@ if(WIN32)
     Server/UDPServer.cpp
     )
     set(HEADER
-    Include/Game/Game.hpp
-    Include/Game/GameManager.hpp
+    Include/Game/GameWin.hpp
+    Include/Game/GameManagerWin.hpp
     Include/Server/UDPServerWin.hpp
 )
 else()

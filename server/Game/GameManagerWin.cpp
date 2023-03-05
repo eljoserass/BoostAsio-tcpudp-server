@@ -1,4 +1,4 @@
-#include "../Include/Game/GameManager.hpp"
+#include "../Include/Game/GameManagerWin.hpp"
 using namespace Server;
 
 void run_game_thread(Game &game)
