@@ -28,7 +28,14 @@ class AbstractECS {
 
 
         void send_to_client(udp::endpoint& client_endpoint, udp::socket& sender,std::string& message) {
-            sender.send_to(boost::asio::buffer(message), client_endpoint);
+            // package into binary
+            const unsigned char* data = reinterpret_cast<const unsigned char*>(message.c_str());
+            std::string result;
+            for (std::size_t i = 0; i < message.size(); ++i) {
+                std::bitset<8> byte(data[i]);
+                result += byte.to_string();
+            }
+            sender.send_to(boost::asio::buffer(result), client_endpoint);
         }
 
         virtual void run(std::shared_ptr<std::string> &clientMessage, std::shared_ptr<std::string>& ECSResponse,  std::shared_ptr<bool>& isGameReady, std::map<udp::endpoint, bool>& players, udp::socket& sender) {
