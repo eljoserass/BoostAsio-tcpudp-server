@@ -64,15 +64,16 @@ void UDPServer::handle_receive(const boost::system::error_code& error, std::size
                 new std::string("ok"));
         std::stringstream buffer_message;
 
-        buffer_message << remote_endpoint_ << "/" << std::string(recv_buffer_.begin(), received); 
+        if (recv_buffer_.begin() != nullptr) {
+            buffer_message << remote_endpoint_ << "/" << std::string(recv_buffer_.begin(), received); 
+        } else {
+            std::cerr << "Error: recv_buffer_.begin() is null" << std::endl;
+            return;
+        }
 
         mtx.lock();
         std::cout << "received in server from client "<<  buffer_message.str() << std::endl;
-
-        std::string binaryData(recv_buffer_.begin(), recv_buffer_.begin() + received);
-        std::string strData = readStringFromBinary(std::istringstream(binaryData));
-
-        clientMessage_ = std::make_shared<std::string>(strData);
+        clientMessage_ = std::make_shared<std::string>(buffer_message.str());
         mtx.unlock();
 
         std::map<udp::endpoint, bool>::iterator it = clients_.find(remote_endpoint_); 
