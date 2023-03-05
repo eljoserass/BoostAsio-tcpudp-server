@@ -5,6 +5,7 @@
 #include <boost/asio.hpp>
 #include <boost/algorithm/string.hpp>
 #include <fstream>
+#include <bitset>
 
 using boost::asio::ip::udp;
 using boost::asio::ip::tcp;

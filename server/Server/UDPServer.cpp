@@ -62,20 +62,17 @@ void UDPServer::update_game_ready() {
     }
 }
 
-std::string UDPServer::readStringFromBinary(std::istream &&input)
+std::string UDPServer::binaryToString(const std::string &binaryStr)
 {
-    input.seekg(0, std::ios::end);
-    std::size_t length = input.tellg();
-    input.seekg(0, std::ios::beg);
-    char* buffer = new char[length];
-
-    input.read(buffer, length);
-    std::string result(buffer, length);
-    delete buffer;
-
+    std::string result;
+    std::bitset<8> bits;
+    for (size_t i = 0; i < binaryStr.size(); i += 8) {
+        bits = std::bitset<8>(binaryStr.substr(i, 8));
+        char c = static_cast<char>(bits.to_ulong());
+        result.push_back(c);
+    }
     return result;
 }
-
 
 void UDPServer::handle_receive(const boost::system::error_code& error, std::size_t received) {
     if (!error) {
@@ -83,19 +80,19 @@ void UDPServer::handle_receive(const boost::system::error_code& error, std::size
             clients_[remote_endpoint_] = false;
         }
         std::cout << "RECEIVED FROM  " << remote_endpoint_ << std::endl;
-        boost::shared_ptr<std::string> message(
-                new std::string("ok"));
+        boost::shared_ptr<std::string> message(new std::string("ok"));
         std::stringstream buffer_message;
 
         if (recv_buffer_.begin() != nullptr) {
-            buffer_message << remote_endpoint_ << "/" << std::string(recv_buffer_.begin(), received); 
+            std::string received_string = binaryToString(std::string(recv_buffer_.begin(), received));
+            buffer_message << remote_endpoint_ << "/" << received_string; 
         } else {
             std::cerr << "Error: recv_buffer_.begin() is null" << std::endl;
             return;
         }
 
         mtx.lock();
-        std::cout << "received in server from client "<<  buffer_message.str() << std::endl;
+        std::cout << "received in server from client " << buffer_message.str() << std::endl;
         clientMessage_ = std::make_shared<std::string>(buffer_message.str());
         mtx.unlock();
 

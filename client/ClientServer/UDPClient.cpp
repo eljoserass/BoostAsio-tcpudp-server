@@ -23,7 +23,6 @@ void run_receive_thread(udp::socket& socket, udp::endpoint& sender_endpoint, std
         /// REMOVE WHEN NOT USING CLI!
         std::cout.write(recv_buf.data(), len);
         std::cout.write("\n", 1);
-        std::cout << "strData = " << strData << std::endl;
     }
 }
 
@@ -42,7 +41,11 @@ UDPClient::UDPClient(std::string ip, std::string port) :
 std::string UDPClient::passStringToBinary(const std::string &str)
 {
     const unsigned char* data = reinterpret_cast<const unsigned char*>(str.c_str());
-    std::string result(data, data + str.size());
+    std::string result;
+    for (std::size_t i = 0; i < str.size(); ++i) {
+        std::bitset<8> byte(data[i]);
+        result += byte.to_string();
+    }
     return result;
 }
 
