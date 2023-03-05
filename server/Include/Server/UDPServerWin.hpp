@@ -6,7 +6,6 @@
 #include <boost/asio.hpp>
 #include <boost/bind/bind.hpp>
 #include <map>
-#ifndef __WIN32__
 #include <winsock2.h>
 #include <Ws2tcpip.h>
 #include <boost/algorithm/string.hpp>
