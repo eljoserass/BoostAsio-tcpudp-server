@@ -23,7 +23,11 @@ std::string UDPServer::getMessage(std::string& message) {
 std::string UDPServer::passStringToBinary(const std::string &str)
 {
     const unsigned char* data = reinterpret_cast<const unsigned char*>(str.c_str());
-    std::string result(data, data + str.size());
+    std::string result;
+    for (std::size_t i = 0; i < str.size(); ++i) {
+        std::bitset<8> byte(data[i]);
+        result += byte.to_string();
+    }
     return result;
 }
 

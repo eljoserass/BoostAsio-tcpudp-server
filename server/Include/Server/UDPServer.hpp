@@ -10,6 +10,7 @@
 #include <netinet/in.h>
 #include <boost/algorithm/string.hpp>
 #include <cstring>
+#include <bitset>
 
 using boost::asio::ip::udp;
 
