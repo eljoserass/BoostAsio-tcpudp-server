@@ -8,6 +8,18 @@ UDPServer::UDPServer(int port, boost::asio::io_context &io_context) : socket_(io
     isGameReady = std::make_shared<bool>(bool(false));
 }
 
+std::string UDPServer::getId(std::string& message) {
+    std::vector <std::string> parsed;
+    boost::split(parsed, message, boost::is_any_of("/"));
+    return (parsed[0]);
+}
+
+std::string UDPServer::getMessage(std::string& message) {
+    std::vector <std::string> parsed;
+    boost::split(parsed, message, boost::is_any_of("/"));
+    return (parsed[1]);
+}
+
 std::string UDPServer::passStringToBinary(const std::string &str)
 {
     const unsigned char* data = reinterpret_cast<const unsigned char*>(str.c_str());
