@@ -6,12 +6,19 @@ set(CMAKE_CXX_STANDARD 17)
 
 include_directories(Include)
 
-set(SRC
+if(WIN32)
+    set(SRC
+    Game/Game.cpp
+    Game/GameManagerWin.cpp
+    Server/UDPServer.cpp
+    )
+else()
+    set(SRC
     Game/Game.cpp
     Game/GameManager.cpp
     Server/UDPServer.cpp
-)
-
+    )
+endif()
 set(HEADER
     Include/Game/Game.hpp
     Include/Game/GameManager.hpp
