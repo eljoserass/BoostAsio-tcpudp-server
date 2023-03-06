@@ -34,10 +34,11 @@ std::string UDPServer::passStringToBinary(const std::string &str)
 void UDPServer::send_to_all(const std::string& message) {
     if (*isGameReady) {
         std::string binaryMessage = passStringToBinary(message);
+        boost::shared_ptr<std::string> message(new std::string(binaryMessage));
         for (const auto& client : clients_) {
             if (client.second == true) {
                 udp::endpoint endpoint = client.first;
-                socket_.async_send_to(boost::asio::buffer(binaryMessage), remote_endpoint_,
+                socket_.async_send_to(boost::asio::buffer(*message), endpoint,
                     boost::bind(&UDPServer::handle_send, this, message,
                     boost::asio::placeholders::error,
                     boost::asio::placeholders::bytes_transferred));
