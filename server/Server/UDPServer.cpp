@@ -37,7 +37,11 @@ void UDPServer::send_to_all(const std::string& message) {
         for (const auto& client : clients_) {
             if (client.second == true) {
                 udp::endpoint endpoint = client.first;
-                socket_.send_to(boost::asio::buffer(binaryMessage), endpoint);
+                socket_.async_send_to(boost::asio::buffer(binaryMessage), remote_endpoint_,
+                    boost::bind(&UDPServer::handle_send, this, message,
+                    boost::asio::placeholders::error,
+                    boost::asio::placeholders::bytes_transferred));
+
             }
         }
     }
