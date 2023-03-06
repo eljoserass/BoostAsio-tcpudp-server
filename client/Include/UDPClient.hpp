@@ -21,6 +21,10 @@ namespace ClientController {
             void join();
             std::string passStringToBinary(const std::string &str);
 
+            std::shared_ptr<bool> isOpen;
+            void close() {
+                *isOpen = false;
+            }
             boost::asio::io_service io_service;
             udp::socket socket;
             udp::resolver resolver;

@@ -14,8 +14,8 @@ std::string binaryToString(const std::string &binaryStr)
     return result;
 }
 
-void run_receive_thread(udp::socket& socket, udp::endpoint& sender_endpoint, std::shared_ptr<std::string>& response) {
-    while (true) {
+void run_receive_thread(udp::socket& socket, udp::endpoint& sender_endpoint, std::shared_ptr<std::string>& response, std::shared_ptr<bool>& isOpen) {
+    while (*isOpen) {
         boost::array<char, 1028> recv_buf;
         size_t len = socket.receive_from(boost::asio::buffer(recv_buf), sender_endpoint);
 
@@ -38,6 +38,7 @@ UDPClient::UDPClient(std::string ip, std::string port) :
     sender_endpoint()
 {
     response = std::make_shared<std::string>(std::string("null"));
+    isOpen = std::make_shared<bool>(bool(true));
     receiver_endpoint =  *resolver.resolve(query);
     sendCommand("clientConnect");
 }
@@ -68,7 +69,7 @@ int UDPClient::sendCommand(std::string command) {
 }
 
 void UDPClient::receive() {
-    receiver_thread = std::thread(run_receive_thread, std::ref(socket), std::ref(sender_endpoint), std::ref(response));
+    receiver_thread = std::thread(run_receive_thread, std::ref(socket), std::ref(sender_endpoint), std::ref(response), std::ref(isOpen));
 }
 
 void UDPClient::join() {

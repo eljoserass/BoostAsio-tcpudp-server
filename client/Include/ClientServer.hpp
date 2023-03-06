@@ -26,6 +26,9 @@ namespace ClientController {
             void listen(void) ;
             void parse_from_cli(void) ;
             void join(void);
+            void close() {
+                udpClient->close();
+            }
 
             UDPClient *udpClient;
             std::vector<AvailableRooms*> available_rooms;

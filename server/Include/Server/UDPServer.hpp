@@ -6,8 +6,6 @@
 #include <boost/asio.hpp>
 #include <boost/bind/bind.hpp>
 #include <map>
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <boost/algorithm/string.hpp>
 #include <cstring>
 #include <bitset>
