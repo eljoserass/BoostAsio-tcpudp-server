@@ -32,6 +32,9 @@ endif()
 
 add_library(server STATIC ${SRC} ${HEADER})
 
-target_link_libraries(server PUBLIC Boost::array Boost::asio Boost::uuid)
-
+target_link_libraries(server Boost::array Boost::asio Boost::uuid)
+if(WIN32)
+target_include_directories(server PUBLIC publicIncludeWin)
+else()
 target_include_directories(server PUBLIC publicInclude)
+endif()
