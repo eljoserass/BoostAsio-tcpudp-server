@@ -75,7 +75,6 @@ int main()
     GameManager *gamemaanager = new GameManager();
 
     gamemaanager->startGame("room1", 1234, io_context, ptr);
-    gamemaanager->startGame("room2", 6969, io_context, ptr);
 
     io_context.run();
 
