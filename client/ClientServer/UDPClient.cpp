@@ -23,10 +23,11 @@ void run_receive_thread(udp::socket& socket, udp::endpoint& sender_endpoint, std
             continue;
         std::string strData = binaryToString(std::string(recv_buf.data(), len));
         *response = strData;
-
+        
+        std::cout << "response:  " << *response << std::endl;
         /// REMOVE WHEN NOT USING CLI!
-        // std::cout.write(recv_buf.data(), len);
-        // std::cout.write("\n", 1);
+        //std::cout.write(recv_buf.data(), len);
+        //std::cout.write("\n", 1);
     }
 }
 

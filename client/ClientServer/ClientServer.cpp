@@ -2,12 +2,13 @@
 
 using namespace ClientController;
 
-ClientServer::ClientServer() {
-    available_rooms.push_back(new AvailableRooms("localhost", "1234", "room1", "easy", "4"));
-    available_rooms.push_back(new AvailableRooms("localhost", "6969", "room2", "easy", "4"));
+ClientServer::ClientServer(std::string host) {
+    available_rooms.push_back(new AvailableRooms(host.c_str(), "1234", "room1", "easy", "4"));
+    available_rooms.push_back(new AvailableRooms(host.c_str(), "6969", "room2", "easy", "4"));
 }
 
 void ClientServer::startGame(int pos) {
+    std::cout << "host " << hostIp << " port " << mainPort;
     udpClient = new UDPClient(available_rooms[0]->ip, available_rooms[0]->port);
 }
 

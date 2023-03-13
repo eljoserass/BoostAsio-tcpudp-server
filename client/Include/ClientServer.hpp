@@ -20,16 +20,31 @@ namespace ClientController {
 
     class ClientServer {
         public:
-            ClientServer();
-
+            ClientServer(std::string host);
+            ClientServer() {
+                hostIp = "localhost";
+                mainPort = "1234";
+                available_rooms.push_back(new AvailableRooms(hostIp.c_str(), "1234", "room1", "easy", "4"));
+                available_rooms.push_back(new AvailableRooms(hostIp.c_str(), "6969", "room2", "easy", "4"));
+            };
+            void setIp(std::string& ipHost) {
+                hostIp = ipHost;
+            };
+            void setPort(std::string& mainPort) {
+                mainPort = mainPort; 
+            };
             void startGame(int pos);
-            void listen(void) ;
+            void startGame() {
+                udpClient = new UDPClient(hostIp, mainPort);
+            };
+            void listen(void);
             void parse_from_cli(void) ;
             void join(void);
             void close() {
                 udpClient->close();
             }
-
+            std::string hostIp;
+            std::string mainPort;
             UDPClient *udpClient;
             std::vector<AvailableRooms*> available_rooms;
     };

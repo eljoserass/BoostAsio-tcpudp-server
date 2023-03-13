@@ -45,7 +45,6 @@ namespace Server {
                         (boost::asio::error::connection_reset == error)) {
                             *isGameReady = false;
                         }
-                
                 };
             std::string binaryToString(const std::string &binaryStr);
             std::string passStringToBinary(const std::string &str);
