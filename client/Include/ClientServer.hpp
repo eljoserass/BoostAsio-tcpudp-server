@@ -27,11 +27,11 @@ namespace ClientController {
                 available_rooms.push_back(new AvailableRooms(hostIp.c_str(), "1234", "room1", "easy", "4"));
                 available_rooms.push_back(new AvailableRooms(hostIp.c_str(), "6969", "room2", "easy", "4"));
             };
-            void setIp(std::string& ipHost) {
+            void setIp(const std::string& ipHost) {
                 hostIp = ipHost;
             };
-            void setPort(std::string& mainPort) {
-                mainPort = mainPort; 
+            void setPort(const std::string& port) {
+                mainPort = port; 
             };
             void startGame(int pos);
             void startGame() {
