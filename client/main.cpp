@@ -10,8 +10,8 @@ int main(int ac, char **av) {
 
     clientServer->listen();
 
-    // clientServer->parse_from_cli();
-    clientServer->close();
+    clientServer->parse_from_cli();
+    // clientServer->close();
 
     clientServer->join();
 

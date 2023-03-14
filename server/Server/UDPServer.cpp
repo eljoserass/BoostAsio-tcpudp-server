@@ -1,8 +1,9 @@
 #include "../Include/Server/UDPServer.hpp"
 using namespace Server;
 
-UDPServer::UDPServer(int port, boost::asio::io_context &io_context) : socket_(io_context, udp::endpoint(udp::v4(), port)), mtx()
+UDPServer::UDPServer(int port, boost::asio::io_context &io_context) : socket_(io_context, udp::endpoint(udp::v4(), port)), mtx(), timer(io_context, boost::posix_time::seconds(1))
 {
+    timer.async_wait(boost::bind(&UDPServer::handle_timer, this, boost::asio::placeholders::error));
     start_receive();
     clientMessage_ = std::make_shared<std::string>(std::string("default message"));
     isGameReady = std::make_shared<bool>(bool(false));
@@ -116,5 +117,34 @@ void UDPServer::handle_receive(const boost::system::error_code& error, std::size
             boost::asio::placeholders::bytes_transferred));
 
         start_receive();
+    }
+}
+
+void UDPServer::handle_send(boost::shared_ptr<std::string> message,
+                 const boost::system::error_code& error,
+                 std::size_t bytes)
+{
+    if (!error) {
+        total_bytes_sent += bytes;
+        num_messages_sent++;
+        std::cout << "Sent " << bytes << " bytes" << std::endl;
+    } else {
+        std::cerr << "Error sending message: " << error.message() << std::endl;
+    }
+}
+
+void UDPServer::handle_timer(const boost::system::error_code& error)
+{
+    if (!error) {
+        if (num_messages_sent > 0) {
+            double average_bytes_sent = static_cast<double>(total_bytes_sent) / num_messages_sent;
+            std::cout << "Average bytes per second: " << average_bytes_sent << std::endl;
+        } else {
+            std::cout << "No messages sent." << std::endl;
+        }
+        total_bytes_sent = 0;
+        num_messages_sent = 0;
+        timer.expires_at(timer.expires_at() + boost::posix_time::seconds(1));
+        timer.async_wait(boost::bind(&UDPServer::handle_timer, this, boost::asio::placeholders::error));
     }
 }

@@ -14,7 +14,7 @@ OBJS	= $(SRCS:.cpp=.o)
 CPPFLAGS = -I./Include/Game -I./Include/Server
 # CPPFLAGS += -Wall -Wextra
 
-LDFLAGS += -L/usr/local/lib -lboost_system -lpthread
+LDFLAGS += -L/usr/local/lib -lboost_system -lpthread -lboost_timer
 
 
 all: $(NAME)

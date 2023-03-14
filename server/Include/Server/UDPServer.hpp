@@ -34,19 +34,17 @@ namespace Server {
 
             std::mutex mtx;
             
+            boost::asio::deadline_timer timer;
+            std::size_t total_bytes_sent;
+            std::size_t num_messages_sent;
+
             void start_receive();
             void handle_receive(const boost::system::error_code& error, std::size_t bytes_transferred);
             void update_game_ready();
             void handle_send(boost::shared_ptr<std::string> message,
                             const boost::system::error_code& error,
-                            std::size_t bytes) 
-                {
-                    if ((boost::asio::error::eof == error) ||
-                        (boost::asio::error::connection_reset == error)) {
-                            *isGameReady = false;
-                        }
-                
-                };
+                            std::size_t bytes);
+            void handle_timer(const boost::system::error_code& error);
             std::string binaryToString(const std::string &binaryStr);
             std::string passStringToBinary(const std::string &str);
     };
