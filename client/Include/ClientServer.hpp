@@ -10,7 +10,6 @@ namespace ClientController {
             AvailableRooms(const char* ipParam, const char* portParam, const char* nameParam, const char* difficultyParam, const char *maxPlayersParam) : 
             ip(ipParam), port(portParam), name(nameParam), difficulty(difficultyParam), max_players(maxPlayersParam) {
             }
-
             std::string ip;
             std::string port;
             std::string name;
@@ -42,7 +41,7 @@ namespace ClientController {
             void join(void);
             void close() {
                 udpClient->close();
-            }
+            };
             std::string hostIp;
             std::string mainPort;
             UDPClient *udpClient;

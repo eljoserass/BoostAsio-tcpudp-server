@@ -21,7 +21,6 @@ Game::Game(int port, boost::asio::io_context &io_context, AbstractECS *ecs) : se
 void Game::run()
 {  
     run_ecs(server_.clientMessage_, ECSResponse_ , server_.isGameReady, server_.clients_, server_.socket_);
-    // server_thread.join();
     sender_thread.join();
     isRunning = false;
 }
