@@ -1,7 +1,7 @@
 #include "../Include/Game/GameManager.hpp"
 using namespace Server;
 
-#define MAX_ROOMS 4
+#define MAX_ROOMS 2 
 
 void run_game_thread(Game &game)
 {
