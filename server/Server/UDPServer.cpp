@@ -140,7 +140,7 @@ void UDPServer::handle_timer(const boost::system::error_code& error)
             std::ofstream logfile("messages.log", std::ios_base::app);
             double average_bytes_sent = static_cast<double>(totalBytesSent) / numMessagesSent;
             if (logfile.is_open()) {
-                logfile << "Average bytes per second: " << average_bytes_sent << " | Number of messages sent: " << numMessagesSent << std::endl;
+                logfile << "Average bytes per second: " << average_bytes_sent << " | Number of messages sent: " << numMessagesSent << " | Total of bytes sent: " << totalBytesSent << std::endl;
                 logfile.close();
             } else {
                 std::cerr << "Error opening log file" << std::endl;
