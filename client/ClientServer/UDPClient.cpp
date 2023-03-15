@@ -23,10 +23,6 @@ void run_receive_thread(udp::socket& socket, udp::endpoint& sender_endpoint, std
             continue;
         std::string strData = binaryToString(std::string(recv_buf.data(), len));
         *response = strData;
-
-        /// REMOVE WHEN NOT USING CLI!
-        // std::cout.write(recv_buf.data(), len);
-        // std::cout.write("\n", 1);
     }
 }
 
@@ -60,11 +56,27 @@ int UDPClient::sendCommand(std::string command) {
     boost::asio::ip::udp::endpoint endpoint = socket.remote_endpoint(ec);
     std::string binaryData = passStringToBinary(command);
 
-    socket.send_to(boost::asio::buffer(binaryData), receiver_endpoint, 0, error);
+    std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
+    std::chrono::steady_clock::time_point end_time = std::chrono::steady_clock::now();
+    size_t bytes_sent = socket.send_to(boost::asio::buffer(binaryData), receiver_endpoint, 0, error);
+    std::chrono::duration<double> elapsed_time = end_time - start_time;
+
     if (error && error != boost::asio::error::message_size) {
         std::cerr << "Error sending message: " << error.message() << std::endl;
         return (84);
     }
+
+    int bytes_per_second = static_cast<int>(std::round(static_cast<double>(bytes_sent) / elapsed_time.count()));
+    std::ofstream logfile("commands.log", std::ios_base::app);
+    if (logfile.is_open()) {
+        logfile << "With the command " << command << " | Sent " << bytes_sent << " bytes | Average speed: " << bytes_per_second << " bytes/second." << std::endl;
+        logfile.close();
+    } else {
+        std::cerr << "Error opening log file" << std::endl;
+    }
+
+    std::cout << "With the command " << command << " | Sent " << bytes_sent << " bytes | Average speed: " << bytes_per_second << " bytes/second." << std::endl;
+
     return (0);
 }
 
@@ -74,4 +86,8 @@ void UDPClient::receive() {
 
 void UDPClient::join() {
     receiver_thread.join();
+}
+
+void UDPClient::close() {
+    *isOpen = false;
 }

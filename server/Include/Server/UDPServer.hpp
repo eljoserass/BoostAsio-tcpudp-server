@@ -9,6 +9,7 @@
 #include <boost/algorithm/string.hpp>
 #include <cstring>
 #include <bitset>
+#include <fstream>
 
 using boost::asio::ip::udp;
 
@@ -35,8 +36,8 @@ namespace Server {
             std::mutex mtx;
             
             boost::asio::deadline_timer timer;
-            std::size_t total_bytes_sent;
-            std::size_t num_messages_sent;
+            std::size_t totalBytesSent;
+            std::size_t numMessagesSent;
 
             void start_receive();
             void handle_receive(const boost::system::error_code& error, std::size_t bytes_transferred);

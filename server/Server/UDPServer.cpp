@@ -125,8 +125,8 @@ void UDPServer::handle_send(boost::shared_ptr<std::string> message,
                  std::size_t bytes)
 {
     if (!error) {
-        total_bytes_sent += bytes;
-        num_messages_sent++;
+        totalBytesSent += bytes;
+        numMessagesSent++;
         std::cout << "Sent " << bytes << " bytes" << std::endl;
     } else {
         std::cerr << "Error sending message: " << error.message() << std::endl;
@@ -136,14 +136,21 @@ void UDPServer::handle_send(boost::shared_ptr<std::string> message,
 void UDPServer::handle_timer(const boost::system::error_code& error)
 {
     if (!error) {
-        if (num_messages_sent > 0) {
-            double average_bytes_sent = static_cast<double>(total_bytes_sent) / num_messages_sent;
+        if (numMessagesSent > 0) {
+            std::ofstream logfile("messages.log", std::ios_base::app);
+            double average_bytes_sent = static_cast<double>(totalBytesSent) / numMessagesSent;
+            if (logfile.is_open()) {
+                logfile << "Average bytes per second: " << average_bytes_sent << " | Number of messages sent: " << numMessagesSent << std::endl;
+                logfile.close();
+            } else {
+                std::cerr << "Error opening log file" << std::endl;
+            }
             std::cout << "Average bytes per second: " << average_bytes_sent << std::endl;
         } else {
             std::cout << "No messages sent." << std::endl;
         }
-        total_bytes_sent = 0;
-        num_messages_sent = 0;
+        totalBytesSent = 0;
+        numMessagesSent = 0;
         timer.expires_at(timer.expires_at() + boost::posix_time::seconds(1));
         timer.async_wait(boost::bind(&UDPServer::handle_timer, this, boost::asio::placeholders::error));
     }
