@@ -1,6 +1,8 @@
 #include "../Include/Game/GameManager.hpp"
 using namespace Server;
 
+#define MAX_ROOMS 4
+
 void run_game_thread(Game &game)
 {
     game.run();
@@ -37,7 +39,9 @@ int getAvailablePort() {
 
 int GameManager::startGame(std::string room, int optPort, boost::asio::io_context &io_context, AbstractECS *ecs)
 {
-    
+    if (gamesTread.size() == MAX_ROOMS) {
+        return (84);
+    }
     int port = -1;
     port = getAvailablePort();
     if (optPort != -1)
