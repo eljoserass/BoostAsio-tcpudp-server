@@ -9,7 +9,7 @@ ClientServer::ClientServer(std::string host) {
 
 void ClientServer::startGame(int pos) {
     std::cout << "host " << hostIp << " port " << mainPort;
-    udpClient = new UDPClient(available_rooms[0]->ip, available_rooms[0]->port);
+    udpClient = new UDPClient(available_rooms[pos]->ip, available_rooms[pos]->port);
 }
 
 void ClientServer::listen(void) {
