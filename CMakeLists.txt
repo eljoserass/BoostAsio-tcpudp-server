@@ -58,3 +58,7 @@ if (tcud_BUILD_SERVER)
     message(STATUS "Building tcud's Server module.")
     add_subdirectory(server)
 endif()
+
+IF(test AND test STREQUAL "on")
+    add_subdirectory(tests)
+ENDIF()
